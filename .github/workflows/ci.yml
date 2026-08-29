@@ -8,7 +8,7 @@ on:
 
 jobs:
   build-and-test:
-    name: Build Compact Circuits, Verify Managed Artifacts & Build dApp
+    name: Build Compact Circuits, Run Test Suite & Build dApp
     runs-on: ubuntu-latest
 
     steps:
@@ -40,6 +40,9 @@ jobs:
 
       - name: Install Dependencies
         run: yarn install --frozen-lockfile
+
+      - name: Run Automated Test Suite (5 Verification Tests)
+        run: yarn test --watchAll=false
 
       - name: Build Static Production Web Application
         run: yarn build
