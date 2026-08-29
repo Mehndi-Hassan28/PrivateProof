@@ -9,7 +9,7 @@
 
 ---
 
-## 🌐 Hackathon Submission Links & Links
+## 🌐 Hackathon Submission Links & Details
 
 - **🌐 Live Production dApp**: [https://private-proof.vercel.app/](https://private-proof.vercel.app/)
 - **🎥 YouTube Demo Video**: [https://www.youtube.com/watch?v=VgpHkUUDYrM](https://www.youtube.com/watch?v=VgpHkUUDYrM)
@@ -29,6 +29,9 @@
 
 ### 2. Deployed Contract Address & Midnight Preprod Node Status
 ![Deployed Contract Address & Preprod Node Status](public/deployed_contract.png)
+
+### 3. Automated Test Output (5/5 Passing Tests)
+![Automated Test Output](public/test_output.png)
 
 ---
 
@@ -115,13 +118,26 @@ PrivateProof/
 
 ## 🧪 Automated Verification Test Suite
 
-PrivateVote includes 5 automated verification tests built into the dApp (viewable in the **Test Suite & CI/CD** tab):
+PrivateVote includes 5 automated verification tests built into the dApp (viewable in the **Test Suite & CI/CD** tab) and executed via Jest CLI:
 
-1. **TEST-01**: Nullifier Determinism & Double-Voting Isolation (`PASSED`)
-2. **TEST-02**: Ballot Commitment Blinding & Choice Hiding (`PASSED`)
-3. **TEST-03**: zk-SNARK R1CS Constraint Verification on BN254 curve (`PASSED`)
-4. **TEST-04**: Compact Smart Contract Managed Artifacts & Manifest Integrity (`PASSED`)
-5. **TEST-05**: Midnight Preprod Deployed Contract Address Format (`PASSED`)
+```bash
+yarn test --watchAll=false
+```
+
+```
+PASS src/App.test.js
+  PrivateVote Zero-Knowledge Governance Test Suite
+    ✓ TEST-01: Nullifier Determinism & Double-Voting Isolation (1 ms)
+    ✓ TEST-02: Ballot Commitment Blinding & Choice Hiding (1 ms)
+    ✓ TEST-03: zk-SNARK R1CS Constraint Verification on BN254 curve
+    ✓ TEST-04: Compact Smart Contract Managed Artifacts & Manifest Integrity
+    ✓ TEST-05: Midnight Preprod Deployed Contract Address Format (1 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       5 passed, 5 total
+Snapshots:   0 total
+Time:        0.471 s
+```
 
 ---
 
@@ -136,13 +152,18 @@ PrivateVote includes 5 automated verification tests built into the dApp (viewabl
 yarn install
 ```
 
-### 2. Run Application Locally
+### 2. Run Test Suite
+```bash
+yarn test --watchAll=false
+```
+
+### 3. Run Application Locally
 ```bash
 yarn start
 ```
 Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-### 3. Build Production Bundle & Deploy
+### 4. Build Production Bundle & Deploy
 ```bash
 yarn build
 ```
@@ -155,4 +176,5 @@ The static production bundle will be generated in `build/`, ready to deploy to V
 The GitHub Actions workflow (`.github/workflows/ci.yml`) automatically executes on every push:
 1. Validates `private_vote.compact` smart contract compilation.
 2. Asserts presence of `managed/` directory (circuits, keys, AST, manifest).
-3. Installs dependencies and builds the static production application.
+3. Executes automated Jest test suite (5/5 tests passing).
+4. Installs dependencies and builds the static production application.
