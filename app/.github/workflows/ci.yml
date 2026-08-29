@@ -1,0 +1,68 @@
+name: PrivateVote Midnight CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build-and-test:
+    name: Build Compact Circuits & Run Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'yarn'
+          cache-dependency-path: frontend/yarn.lock
+
+      - name: Install Backend Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r backend/requirements.txt
+
+      - name: Compile Compact Smart Contract
+        run: |
+          chmod +x scripts/compile_compact.sh
+          ./scripts/compile_compact.sh contract/private_vote.compact managed/private_vote
+
+      - name: Verify Managed Circuit Artifacts & Keys
+        run: |
+          test -f managed/private_vote/contract/index.js
+          test -f managed/private_vote/contract/index.d.ts
+          test -f managed/private_vote/zkir/private_vote.zkir
+          test -f managed/private_vote/keys/private_vote.prover
+          test -f managed/private_vote/keys/private_vote.verifier
+          test -f managed/private_vote/compiler/contract-info.json
+          test -f managed/private_vote/compiler/contract-manifest.json
+          echo "All managed Compact artifacts verified successfully."
+
+      - name: Run Backend Pytest Suite
+        run: |
+          cd backend
+          pytest tests/ -v
+
+      - name: Install Frontend Dependencies
+        run: |
+          cd frontend
+          yarn install --frozen-lockfile
+
+      - name: Build Frontend Production Bundle
+        run: |
+          cd frontend
+          yarn build
+        env:
+          CI: false
+          REACT_APP_BACKEND_URL: "https://private-tally.preview.emergentagent.com"
