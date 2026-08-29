@@ -54,7 +54,7 @@ export const Navbar = ({ activeTab, setActiveTab }) => {
   return (
     <header
       data-testid="main-header"
-      className="sticky top-0 z-40 w-full border-b border-slate-800/80 bg-slate-950/90 backdrop-blur-2xl transition-all"
+      className="sticky top-0 z-40 w-full border-b border-slate-800/80 bg-slate-950/95 backdrop-blur-3xl transition-all"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 sm:h-20">
@@ -86,7 +86,7 @@ export const Navbar = ({ activeTab, setActiveTab }) => {
           </div>
 
           {/* Desktop Navigation Bar (Full for XL Screens >= 1280px) */}
-          <nav className="hidden xl:flex items-center space-x-1.5 bg-slate-900/80 p-1.5 rounded-2xl border border-slate-800/80 shadow-inner">
+          <nav className="hidden xl:flex items-center space-x-1.5 bg-slate-900/90 p-1.5 rounded-2xl border border-slate-800 shadow-inner">
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;
@@ -109,7 +109,7 @@ export const Navbar = ({ activeTab, setActiveTab }) => {
           </nav>
 
           {/* Medium Screen Compact Navigation Bar (1024px - 1279px) */}
-          <nav className="hidden lg:flex xl:hidden items-center space-x-1 bg-slate-900/80 p-1 rounded-xl border border-slate-800">
+          <nav className="hidden lg:flex xl:hidden items-center space-x-1 bg-slate-900/90 p-1 rounded-xl border border-slate-800">
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;
@@ -186,7 +186,7 @@ export const Navbar = ({ activeTab, setActiveTab }) => {
             {isConnected ? (
               <button
                 onClick={() => setIsLaceModalOpen(true)}
-                className="px-2.5 py-1.5 rounded-xl bg-slate-900 border border-sky-500/40 text-sky-400 text-xs font-mono font-bold flex items-center gap-1.5"
+                className="px-2.5 py-1.5 rounded-xl bg-slate-950 border border-sky-500/40 text-sky-400 text-xs font-mono font-bold flex items-center gap-1.5"
               >
                 <div className="w-2 h-2 rounded-full bg-emerald-400"></div>
                 <span>{walletAddress.slice(0, 6)}...</span>
@@ -202,16 +202,16 @@ export const Navbar = ({ activeTab, setActiveTab }) => {
             <button
               data-testid="mobile-hamburger-btn"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 hover:text-white focus:outline-none"
+              className="p-2.5 rounded-2xl bg-slate-950 border border-slate-800 text-slate-200 hover:text-white hover:border-slate-700 focus:outline-none shadow-md"
               aria-label="Toggle Navigation Menu"
             >
-              {mobileMenuOpen ? <X className="w-5 h-5 text-sky-400" /> : <Menu className="w-5 h-5" />}
+              {mobileMenuOpen ? <X className="w-5 h-5 text-sky-400" /> : <Menu className="w-5 h-5 text-slate-200" />}
             </button>
           </div>
         </div>
 
         {/* Mobile Horizontal Sub-Bar for Quick 1-Tap Switching */}
-        <div className="flex lg:hidden overflow-x-auto py-2 border-t border-slate-800/60 gap-1.5 scrollbar-none">
+        <div className="flex lg:hidden overflow-x-auto py-2 border-t border-slate-800/80 gap-1.5 scrollbar-none bg-slate-950">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeTab === item.id;
@@ -223,7 +223,7 @@ export const Navbar = ({ activeTab, setActiveTab }) => {
                 className={`whitespace-nowrap px-3 py-1.5 text-xs font-mono rounded-xl border transition-all flex items-center space-x-1.5 ${
                   isActive
                     ? 'bg-sky-500/20 text-sky-300 border-sky-500/40 font-bold shadow-[0_0_10px_rgba(56,189,248,0.2)]'
-                    : 'bg-slate-900/60 text-slate-400 border-slate-800/80 hover:bg-slate-900'
+                    : 'bg-slate-900/90 text-slate-400 border-slate-800 hover:bg-slate-900'
                 }`}
               >
                 <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-sky-400' : 'text-slate-400'}`} />
@@ -234,11 +234,11 @@ export const Navbar = ({ activeTab, setActiveTab }) => {
         </div>
       </div>
 
-      {/* Mobile Full Screen Drawer Menu */}
+      {/* Mobile Dark Obsidian Drawer Menu */}
       {mobileMenuOpen && (
         <div
           data-testid="mobile-hamburger-drawer"
-          className="lg:hidden fixed inset-x-0 top-[65px] border-b border-slate-800 bg-slate-950/98 backdrop-blur-3xl px-4 pt-3 pb-8 space-y-4 shadow-2xl transition-all z-50 max-h-[85vh] overflow-y-auto"
+          className="lg:hidden fixed inset-x-0 top-[65px] border-b border-slate-800 bg-slate-950/98 backdrop-blur-3xl px-4 pt-4 pb-8 space-y-4 shadow-2xl transition-all z-50 max-h-[85vh] overflow-y-auto"
         >
           <div className="space-y-1.5">
             {navItems.map((item) => {
@@ -251,8 +251,8 @@ export const Navbar = ({ activeTab, setActiveTab }) => {
                   onClick={() => handleTabClick(item.id)}
                   className={`w-full text-left px-4 py-3.5 text-xs font-mono font-bold rounded-2xl transition-all flex items-center justify-between ${
                     isActive
-                      ? 'bg-gradient-to-r from-sky-500/20 to-purple-500/20 text-sky-300 border border-sky-500/40 shadow-[0_0_15px_rgba(56,189,248,0.2)]'
-                      : 'text-slate-300 hover:bg-slate-900 border border-transparent'
+                      ? 'bg-slate-900/90 text-sky-300 border border-sky-500/40 shadow-[0_0_15px_rgba(56,189,248,0.2)]'
+                      : 'bg-slate-950/80 text-slate-300 hover:bg-slate-900 border border-slate-900'
                   }`}
                 >
                   <div className="flex items-center space-x-3">
