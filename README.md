@@ -4,6 +4,7 @@
 ![Midnight Preprod](https://img.shields.io/badge/Network-Midnight%20Preprod%20(Testnet--0.23)-38bdf8?style=flat-square)
 ![Compact Compiler](https://img.shields.io/badge/Compiler-Compact%20v0.23.4-a78bfa?style=flat-square)
 ![ZK Curve](https://img.shields.io/badge/ZK--SNARK-BN254%20(3840%20Constraints)-10b981?style=flat-square)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FMehndi-Hassan28%2FPrivateProof)
 
 ---
 
@@ -59,6 +60,7 @@ Midnight’s dual-state architecture explicitly demarcates public ledger state f
 ```
 PrivateProof/
 ├── .github/workflows/ci.yml       # GitHub Actions CI/CD Pipeline
+├── vercel.json                    # Single-click Vercel static deployment config
 ├── public/contract/               # Compiled Compact artifacts & source
 │   ├── private_vote.compact       # Smart contract source code
 │   ├── private_vote.zkir          # Intermediate Representation
@@ -126,11 +128,11 @@ yarn start
 ```
 Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-### 3. Build Production Bundle
+### 3. Build Production Bundle & Deploy
 ```bash
 yarn build
 ```
-The static production bundle will be generated in `build/`, ready to deploy to Vercel or Netlify.
+The static production bundle will be generated in `build/`, ready to deploy to Vercel, Netlify, or GitHub Pages.
 
 ---
 
