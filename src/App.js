@@ -8,6 +8,7 @@ import { PrivacyInspector } from './components/PrivacyInspector';
 import { ZKPlayground } from './components/ZKPlayground';
 import { ContractExplorer } from './components/ContractExplorer';
 import { TestSuiteViewer } from './components/TestSuiteViewer';
+import { UserProfile } from './components/UserProfile';
 import { LaceWalletModal } from './components/LaceWalletModal';
 import './index.css';
 
@@ -36,6 +37,9 @@ function AppInner() {
         {activeTab === 'playground' && <ZKPlayground />}
         {activeTab === 'contract' && <ContractExplorer />}
         {activeTab === 'tests' && <TestSuiteViewer />}
+        {activeTab === 'profile' && (
+          <UserProfile onNavigateToProposals={() => setActiveTab('proposals')} />
+        )}
       </main>
       <LaceWalletModal />
       <Toaster theme="dark" position="bottom-right" richColors />
