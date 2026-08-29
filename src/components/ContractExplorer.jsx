@@ -1,18 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Badge } from './ui/badge';
-import { Button } from './ui/button';
 import {
   FileCode2,
   Server,
-  Shield,
-  ExternalLink,
   Copy,
   Check,
-  Folder,
   File,
-  Terminal,
-  Activity,
-  Layers,
   Cpu,
 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -55,7 +48,7 @@ export const ContractExplorer = () => {
     <div className="space-y-8" data-testid="contract-explorer-view">
       {/* Header */}
       <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-slate-900 via-slate-950 to-indigo-950/40 border border-indigo-500/20 space-y-3">
-        <div className="flex flex-wrap items-center justify-between gap-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div className="space-y-1">
             <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 text-xs font-mono">
               <Server className="w-3.5 h-3.5" />
@@ -64,12 +57,12 @@ export const ContractExplorer = () => {
             <h2 className="font-heading text-2xl sm:text-3xl font-extrabold text-white">
               Deployed Contract & Managed ZK Artifacts
             </h2>
-            <p className="text-xs sm:text-sm text-slate-400 font-sans max-w-2xl">
+            <p className="text-xs sm:text-sm text-slate-400 font-sans max-w-2xl leading-relaxed">
               Verified Compact bytecode deployed on Midnight Preprod network with managed zero-knowledge keys, prover circuits, and TypeScript runtime bindings.
             </p>
           </div>
 
-          <Badge className="bg-emerald-500/10 text-emerald-400 border-emerald-500/30 font-mono text-xs px-3 py-1">
+          <Badge className="bg-emerald-500/10 text-emerald-400 border-emerald-500/30 font-mono text-xs px-3 py-1 self-start sm:self-auto">
             <span className="w-2 h-2 rounded-full bg-emerald-400 inline-block mr-1.5 animate-pulse"></span>
             Node Synced (Block #{networkStatus?.block_height || '142980'})
           </Badge>
@@ -85,7 +78,7 @@ export const ContractExplorer = () => {
             <button
               data-testid="copy-deployed-contract-address-btn"
               onClick={() => handleCopy(CONTRACT_ADDRESS)}
-              className="ml-2 p-1.5 rounded-lg bg-slate-900 text-slate-400 hover:text-white"
+              className="ml-2 p-1.5 rounded-lg bg-slate-900 text-slate-400 hover:text-white flex-shrink-0"
             >
               {copiedAddr ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
             </button>
@@ -120,7 +113,7 @@ export const ContractExplorer = () => {
       {/* Managed Directory & Code Artifacts Explorer */}
       <div className="rounded-2xl border border-slate-800 bg-slate-900/60 overflow-hidden">
         {/* Tab Headers */}
-        <div className="flex items-center space-x-2 p-3 bg-slate-950/80 border-b border-slate-800 overflow-x-auto">
+        <div className="flex items-center space-x-2 p-3 bg-slate-950/80 border-b border-slate-800 overflow-x-auto scrollbar-none">
           {[
             { id: 'compact', label: 'contract/private_vote.compact', icon: FileCode2 },
             { id: 'manifest', label: 'managed/.../contract-manifest.json', icon: File },
