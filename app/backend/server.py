@@ -13,6 +13,37 @@ from pydantic import BaseModel, Field, ConfigDict
 from typing import List, Optional, Dict, Any
 import uuid
 from datetime import datetime, timezone
+
+# Load environment variables
+load_dotenv()
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+# -------------------------------------------------------------------------
+# FastAPI Application & MongoDB Setup
+# -------------------------------------------------------------------------
+app = FastAPI(
+    title="PrivateVote Midnight Governance API",
+    description="Zero-Knowledge private voting on the Midnight Network using Compact circuits",
+    version="1.0.0"
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_credentials=True,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# MongoDB connection
+MONGO_URL = os.environ.get("MONGO_URL", "mongodb://localhost:27017")
+client = AsyncIOMotorClient(MONGO_URL)
+db = client[os.environ.get("DB_NAME", "privatevote_db")]
+
+api_router = APIRouter(prefix="/api")
+
 CONTRACT_ADDRESS = "02008f1b635293da2768e1c64dfc6dfad1712a32c66c3c54d7f573dc086e33ecb2"
 NETWORK_NAME = "Midnight Preprod (Testnet-0.23)"
 VERIFIER_DIGEST = "0x94f6c31a77918d2fbb4a91902bbdc327cfd720b001a1c93a0279cbe0d3bb639a"
