@@ -4,7 +4,21 @@
 ![Midnight Preprod](https://img.shields.io/badge/Network-Midnight%20Preprod%20(Testnet--0.23)-38bdf8?style=flat-square)
 ![Compact Compiler](https://img.shields.io/badge/Compiler-Compact%20v0.23.4-a78bfa?style=flat-square)
 ![ZK Curve](https://img.shields.io/badge/ZK--SNARK-BN254%20(3840%20Constraints)-10b981?style=flat-square)
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FMehndi-Hassan28%2FPrivateProof)
+[![Live Demo](https://img.shields.io/badge/Live%20dApp-private--proof.vercel.app-000000?style=flat-square&logo=vercel)](https://private-proof.vercel.app/)
+[![YouTube Demo](https://img.shields.io/badge/Demo%20Video-YouTube-ff0000?style=flat-square&logo=youtube)](https://www.youtube.com/watch?v=VgpHkUUDYrM)
+
+---
+
+## 🌐 Hackathon Submission Links & Links
+
+- **🌐 Live Production dApp**: [https://private-proof.vercel.app/](https://private-proof.vercel.app/)
+- **🎥 YouTube Demo Video**: [https://www.youtube.com/watch?v=VgpHkUUDYrM](https://www.youtube.com/watch?v=VgpHkUUDYrM)
+- **📜 Deployed Contract Address (Midnight Preprod)**:  
+  `02008f1b635293da2768e1c64dfc6dfad1712a32c66c3c54d7f573dc086e33ecb2`
+- **🔎 Midnight Preprod Explorer**:  
+  [https://explorer.preprod.midnight.network/contract/02008f1b635293da2768e1c64dfc6dfad1712a32c66c3c54d7f573dc086e33ecb2](https://explorer.preprod.midnight.network/contract/02008f1b635293da2768e1c64dfc6dfad1712a32c66c3c54d7f573dc086e33ecb2)
+- **💻 Public GitHub Repository**:  
+  [https://github.com/Mehndi-Hassan28/PrivateProof](https://github.com/Mehndi-Hassan28/PrivateProof)
 
 ---
 
