@@ -1,57 +1,56 @@
-import { useEffect } from "react";
-import "@/App.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import axios from "axios";
-import { HOME } from "@/constants/testIds";
+import React, { useState } from 'react';
+import { BrowserRouter } from 'react-router-dom';
+import { Toaster } from 'sonner';
+import { WalletProvider } from './context/WalletContext';
+import { Navbar } from './components/Navbar';
+import { ProposalsList } from './components/ProposalsList';
+import { PrivacyInspector } from './components/PrivacyInspector';
+import { ZKPlayground } from './components/ZKPlayground';
+import { ContractExplorer } from './components/ContractExplorer';
+import { TestSuiteViewer } from './components/TestSuiteViewer';
+import { LaceWalletModal } from './components/LaceWalletModal';
+import './index.css';
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-const API = `${BACKEND_URL}/api`;
+function AppInner() {
+  const [activeTab, setActiveTab] = useState('proposals');
+  const [inspectorProposalId, setInspectorProposalId] = useState('prop-mid-001');
 
-const Home = () => {
-  const helloWorldApi = async () => {
-    try {
-      const response = await axios.get(`${API}/`);
-      console.log(response.data.message);
-    } catch (e) {
-      console.error(e, `errored out requesting / api`);
-    }
+  const handleOpenInspector = (proposalId) => {
+    setInspectorProposalId(proposalId);
+    setActiveTab('inspector');
   };
 
-  useEffect(() => {
-    helloWorldApi();
-  }, []);
-
   return (
-    <div>
-      <header className="App-header">
-        <a
-          data-testid={HOME.emergentLink}
-          className="App-link"
-          href="https://emergent.sh"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <img src="https://avatars.githubusercontent.com/in/1201222?s=120&u=2686cf91179bbafbc7a71bfbc43004cf9ae1acea&v=4" />
-        </a>
-        <p className="mt-5">Building something incredible ~!</p>
-      </header>
-    </div>
-  );
-};
-
-function App() {
-  return (
-    <div className="App">
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Home />}>
-            <Route index element={<Home />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
+    <div className="min-h-screen bg-slate-950 text-white">
+      <Navbar activeTab={activeTab} setActiveTab={setActiveTab} />
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {activeTab === 'proposals' && (
+          <ProposalsList
+            onSelectProposal={() => {}}
+            onOpenInspector={handleOpenInspector}
+          />
+        )}
+        {activeTab === 'inspector' && (
+          <PrivacyInspector initialProposalId={inspectorProposalId} />
+        )}
+        {activeTab === 'playground' && <ZKPlayground />}
+        {activeTab === 'contract' && <ContractExplorer />}
+        {activeTab === 'tests' && <TestSuiteViewer />}
+      </main>
+      <LaceWalletModal />
+      <Toaster theme="dark" position="bottom-right" richColors />
     </div>
   );
 }
 
-export default App;
+function App() {
+  return (
+    <BrowserRouter>
+      <WalletProvider>
+        <AppInner />
+      </WalletProvider>
+    </BrowserRouter>
+  );
+}
 
+export default App;
