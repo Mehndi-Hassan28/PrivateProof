@@ -7,6 +7,16 @@
 
 ---
 
+## 📸 Submission Screenshots & Verification Evidence
+
+### 1. Successful Compact Contract Compilation (Circuits Listed)
+![Compact Contract Compilation Output](public/terminal.png)
+
+### 2. Deployed Contract Address & Midnight Preprod Node Status
+![Deployed Contract Address & Preprod Node Status](public/deployed_contract.png)
+
+---
+
 ## 💡 Product Idea & Overview
 
 **PrivateVote** is a privacy-preserving zero-knowledge governance platform built on the Midnight Network that enables token holders to cast verifiable votes on community proposals while guaranteeing 100% ballot secrecy and identity protection. By synthesizing client-side BN254 zk-SNARK proofs using Compact smart contract circuits, PrivateVote decouples voter identity from public tallies—allowing decentralized organizations to eliminate voter intimidation, coercion, and bandwagon bias while maintaining mathematical transparency and double-voting prevention.
@@ -71,6 +81,7 @@ PrivateProof/
 │   │   ├── PrivacyInspector.jsx   # Public vs Private dual-state inspector
 │   │   ├── ZKPlayground.jsx       # Interactive ZK sandbox
 │   │   ├── TestSuiteViewer.jsx    # Automated verification test suite
+│   │   ├── UserProfile.jsx        # User profile & key manager
 │   │   └── LaceWalletModal.jsx    # Lace wallet connect & secret manager
 │   ├── context/
 │   │   └── WalletContext.js       # Lace wallet session state
