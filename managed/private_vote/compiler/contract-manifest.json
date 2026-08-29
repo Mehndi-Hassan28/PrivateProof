@@ -1,0 +1,32 @@
+{
+  "manifest_version": "5.0.0",
+  "contract_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "artifacts": {
+    "contract_js": "managed/private_vote/contract/index.js",
+    "contract_dts": "managed/private_vote/contract/index.d.ts",
+    "zkir": "managed/private_vote/zkir/private_vote.zkir",
+    "bzkir": "managed/private_vote/zkir/private_vote.bzkir",
+    "prover_key": "managed/private_vote/keys/private_vote.prover",
+    "verifier_key": "managed/private_vote/keys/private_vote.verifier"
+  },
+  "circuits_manifest": {
+    "castPrivateVote": {
+      "r1cs_constraints": 3840,
+      "public_inputs": 2,
+      "private_inputs": 11,
+      "verifier_digest": "0x94f6c31a77918d2fbb4a91902bbdc327cfd720b001a1c93a0279cbe0d3bb639a"
+    },
+    "initializeProposal": {
+      "r1cs_constraints": 142,
+      "public_inputs": 5,
+      "private_inputs": 0,
+      "verifier_digest": "0x12c8a773d401e9bb89201f8d3817a35567bfa2b39910d6c543632918e950bc41"
+    },
+    "closeProposal": {
+      "r1cs_constraints": 86,
+      "public_inputs": 1,
+      "private_inputs": 0,
+      "verifier_digest": "0x78ab221c902ff21ab663e01297cc89df901239aa80144f88120bba542289c099"
+    }
+  }
+}
