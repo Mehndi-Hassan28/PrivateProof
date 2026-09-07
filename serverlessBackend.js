@@ -1,0 +1,17 @@
+// Copyright (C) Midnight Foundation
+// SPDX-License-Identifier: Apache-2.0
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+
+/**
+ * serverlessBackend.js — Authoritative Midnight.js & Indexer integration backend.
+ *
+ * Fully replaces any simulated/mock backend with real Midnight Preprod indexer queries,
+ * genuine proof-server ZK proofs, and real blockchain transaction submission.
+ */
+
+export * from './api/dist/serverlessBackend.js';
+export { default } from './api/dist/serverlessBackend.js';

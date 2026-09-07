@@ -1,0 +1,59 @@
+// This file needs to be compiled with compact before TS code will work.
+// Command: compact compile src/private-vote.compact ./src/managed/private-vote
+
+pragma language_version 0.23;
+
+import CompactStandardLibrary;
+
+export ledger voteCount: Counter;
+export ledger yesCount: Counter;
+export ledger noCount: Counter;
+export ledger nullifierSet: Map<Bytes<32>, Boolean>;
+export ledger pollOpen: Boolean;
+export ledger adminKey: Bytes<32>;
+
+constructor() {
+  pollOpen = true;
+  adminKey = disclose(publicKey(localAdminKey()));
+}
+
+witness localSecretKey(): Bytes<32>;
+witness localAdminKey(): Bytes<32>;
+
+export circuit publicKey(sk: Bytes<32>): Bytes<32> {
+  return persistentHash<Vector<2, Bytes<32>>>([pad(32, "pvote:admin:"), sk]);
+}
+
+export circuit getNullifier(sk: Bytes<32>): Bytes<32> {
+  return persistentHash<Vector<2, Bytes<32>>>([pad(32, "pvote:nullifier:"), sk]);
+}
+
+export circuit castPrivateVote(voteYes: Boolean): [] {
+  assert(pollOpen, "Poll is closed");
+  
+  const sk = localSecretKey();
+  const nullifier = disclose(getNullifier(sk));
+  
+  assert(!nullifierSet.member(nullifier), "Already voted");
+  nullifierSet.insert(nullifier, true);
+  
+  voteCount.increment(1);
+  if (disclose(voteYes)) {
+    yesCount.increment(1);
+  } else {
+    noCount.increment(1);
+  }
+}
+
+export circuit closePoll(): [] {
+  assert(pollOpen, "Poll is already closed");
+  const sk = localAdminKey();
+  const adminPubKey = publicKey(sk);
+  assert(adminPubKey == adminKey, "Only admin can close poll");
+  pollOpen = false;
+}
+
+export circuit getResults(): [Field, Field, Field] {
+  assert(!pollOpen, "Poll is still open");
+  return [voteCount as Field, yesCount as Field, noCount as Field];
+}

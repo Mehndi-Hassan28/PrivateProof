@@ -247,3 +247,6 @@ export class BBoardAPI implements DeployedBBoardAPI {
 export * as utils from './utils/index.js';
 
 export * from './common-types.js';
+export * from './private-vote-types.js';
+export * from './private-vote-api.js';
+export * from './serverlessBackend.js';

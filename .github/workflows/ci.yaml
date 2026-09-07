@@ -9,7 +9,8 @@ on:
 permissions: {}
 
 jobs:
-  install-and-test:
+  # ── Static checks + unit tests ──────────────────────────────────────────────
+  build-and-unit-test:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -43,7 +44,10 @@ jobs:
       - name: Install dependencies
         run: npm ci --legacy-peer-deps
 
-      - name: Compile and test contract
+      - name: Compile Compact contract
+        run: bash scripts/compile_compact.sh
+
+      - name: Compile and test contract (unit)
         working-directory: contract
         run: |
           npm run ci
@@ -62,3 +66,65 @@ jobs:
         working-directory: bboard-ui
         run: |
           npm run ci
+
+  # ── Integration tests (full Midnight stack via Testcontainers) ───────────────
+  integration-test:
+    runs-on: ubuntu-latest
+    needs: build-and-unit-test
+    permissions:
+      contents: read
+    # Integration tests require Docker (Testcontainers) and take ~30-45 min.
+    # They are gated behind this condition so forks / draft PRs don't consume
+    # unnecessary CI minutes; remove the condition to always run them.
+    if: >
+      github.event_name == 'push' ||
+      (github.event_name == 'pull_request' && !github.event.pull_request.draft)
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  #v7.0.1
+
+      - name: Setup Compact Compiler
+        uses: midnightntwrk/setup-compact-action@836895c8fffbbea6bd986af2b17e8941ff29d1f8
+        with:
+          compact-version: '0.31.1'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020  #v7.0.0
+        with:
+          node-version: "24"
+
+      - name: Update NPM
+        run: |
+          npm install -g npm@12.0.2
+
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Compile Compact contract
+        run: bash scripts/compile_compact.sh
+
+      - name: Build contract package
+        working-directory: contract
+        run: npm run build
+
+      - name: Build api package
+        working-directory: api
+        run: npm run build
+
+      - name: Build bboard-cli
+        working-directory: bboard-cli
+        run: npm run build
+
+      - name: Run integration tests (Testcontainers stack)
+        working-directory: bboard-cli
+        timeout-minutes: 45
+        run: npm run test:integration
+
+      - name: Upload integration test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: integration-test-report
+          path: bboard-cli/reports/report.xml

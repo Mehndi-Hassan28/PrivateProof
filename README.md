@@ -2,7 +2,7 @@
 
 This project is built on the [Midnight Network](https://midnight.network/).
 
-[![Generic badge](https://img.shields.io/badge/Compact%20Compiler-0.30.0-1abc9c.svg)](https://shields.io/)
+[![Generic badge](https://img.shields.io/badge/Compact%20Compiler-0.31.1-1abc9c.svg)](https://shields.io/)
 [![Generic badge](https://img.shields.io/badge/TypeScript-5.9.3-blue.svg)](https://shields.io/)
 
 
@@ -77,7 +77,20 @@ This repository uses npm workspaces. Run installation once from the repository r
 
 ### Compile the Smart Contract
 
-The Compact compiler (`compactc 0.31.0`) generates TypeScript bindings and zero-knowledge circuits from the smart contract source code:
+The Compact compiler (`compactc 0.31.1`) generates TypeScript bindings and zero-knowledge circuits from the smart contract source code. The authoritative invocation is wrapped in [`scripts/compile_compact.sh`](./scripts/compile_compact.sh):
+
+```bash
+# Compile incrementally (only re-generates changed circuits)
+bash scripts/compile_compact.sh
+
+# Or via npm from the repo root
+npm run compact
+
+# Clean compile (removes managed/ output first)
+npm run compact:clean
+```
+
+Alternatively, compile directly from the `contract` workspace:
 
 ```bash
 cd contract
@@ -89,17 +102,60 @@ cd ..
 Expected output:
 
 ```
-> compact
-> compact compile src/bboard.compact ./src/managed/bboard
-
+Using compiler: compact 0.31.1
+Compiling: .../contract/src/bboard.compact
+Output:    .../contract/src/managed/bboard
 Compiling 2 circuits:
   circuit "post" (k=14, rows=10070)
   circuit "takeDown" (k=14, rows=10087)
 
-> build
-> rm -rf dist && tsc --project tsconfig.build.json && cp -Rf ./src/managed ./dist/managed && cp ./src/bboard.compact ./dist
+Compilation successful. Generated artefacts:
+  contract/src/managed/bboard/compiler/...
+  contract/src/managed/bboard/contract/index.js
+  contract/src/managed/bboard/keys/...
+  contract/src/managed/bboard/zkir/...
+```
+
+### Deploy the Contract (Preprod)
+
+`scripts/deploy.ts` uses [`deployContract()`](https://docs.midnight.network/develop/tutorial/using/midnight-js#deploy-a-contract) from `@midnight-ntwrk/midnight-js-contracts` to deploy a new BBoard contract to Midnight Preprod, generate the ZK proof via `httpClientProofProvider`, balance and submit the transaction through the wallet SDK, and then write the resulting real contract address to `CONTRACT_ADDRESS` in the repository root.
+
+```bash
+# Prerequisites: proof server running on http://127.0.0.1:6300
+#                funded preprod wallet (see faucet link below)
+
+# Optional: supply your own seed (64-char hex)
+export WALLET_SEED="<your-seed>"
+# Optional: override proof server URL
+export PROOF_SERVER="http://127.0.0.1:6300"
+
+npm run deploy
+```
+
+The script will:
+
+1. Derive wallet keys from `WALLET_SEED` (or generate a fresh one)
+2. Wait for tNIGHT funds on the wallet's unshielded address
+3. Call `deployContract()` which generates a ZK proof for the constructor
+4. Submit the deployment transaction to Midnight Preprod via the indexer
+5. Print the contract address and write it to `CONTRACT_ADDRESS`
+
+Expected output:
 
 ```
+=== BBoard Contract Deployment (preprod) ===
+Indexer:      https://indexer.preprod.midnight.network/api/v4/graphql
+Proof server: http://127.0.0.1:6300
+...
+=== Deployment complete ===
+Contract address: 0200dbf964f541e1950883f5b2f539b66fd6111e46ce8e6e9551fbdd180114d5dd5b
+Deployment tx:    <real-txhash>
+Block height:     <real-block-height>
+Contract address written to: .../CONTRACT_ADDRESS
+```
+
+The address in `CONTRACT_ADDRESS` is the authoritative deployment address for this repository instance.
+
 
 ### Build the CLI Interface
 
@@ -181,7 +237,7 @@ Your NIGHT wallet balance is: 1000000000
 Expected output:
 
 ```
-Deployed bulletin board contract at address: [contract address]
+Deployed bulletin board contract at address: 0200dbf964f541e1950883f5b2f539b66fd6111e46ce8e6e9551fbdd180114d5dd5b
 ```
 
 #### Use the Bulletin Board

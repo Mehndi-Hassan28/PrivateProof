@@ -5,6 +5,11 @@
   "license": "MIT",
   "private": true,
   "type": "module",
+  "scripts": {
+    "compact": "bash scripts/compile_compact.sh",
+    "compact:clean": "bash scripts/compile_compact.sh --clean",
+    "deploy": "node --loader ts-node/esm scripts/deploy.ts"
+  },
   "engines": {
     "node": ">=24.11.1"
   },
