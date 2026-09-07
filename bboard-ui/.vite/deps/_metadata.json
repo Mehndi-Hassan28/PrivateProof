@@ -1,0 +1,278 @@
+{
+  "hash": "0bd90d64",
+  "configHash": "5fd4528a",
+  "lockfileHash": "8c2260d2",
+  "browserHash": "830dcb08",
+  "optimized": {
+    "@midnight-ntwrk/compact-runtime": {
+      "src": "../../../node_modules/@midnight-ntwrk/compact-runtime/dist/index.js",
+      "file": "@midnight-ntwrk_compact-runtime.js",
+      "fileHash": "57381599",
+      "needsInterop": false
+    },
+    "@midnight-ntwrk/dapp-connector-api": {
+      "src": "../../../node_modules/@midnight-ntwrk/dapp-connector-api/dist/index.mjs",
+      "file": "@midnight-ntwrk_dapp-connector-api.js",
+      "fileHash": "1c40f049",
+      "needsInterop": false
+    },
+    "@midnight-ntwrk/midnight-js-contracts": {
+      "src": "../../../node_modules/@midnight-ntwrk/midnight-js-contracts/dist/index.mjs",
+      "file": "@midnight-ntwrk_midnight-js-contracts.js",
+      "fileHash": "19fd3675",
+      "needsInterop": false
+    },
+    "@midnight-ntwrk/midnight-js-fetch-zk-config-provider": {
+      "src": "../../../node_modules/@midnight-ntwrk/midnight-js-fetch-zk-config-provider/dist/index.mjs",
+      "file": "@midnight-ntwrk_midnight-js-fetch-zk-config-provider.js",
+      "fileHash": "52711536",
+      "needsInterop": false
+    },
+    "@midnight-ntwrk/midnight-js-http-client-proof-provider": {
+      "src": "../../../node_modules/@midnight-ntwrk/midnight-js-http-client-proof-provider/dist/index.mjs",
+      "file": "@midnight-ntwrk_midnight-js-http-client-proof-provider.js",
+      "fileHash": "73674c93",
+      "needsInterop": false
+    },
+    "@midnight-ntwrk/midnight-js-indexer-public-data-provider": {
+      "src": "../../../node_modules/@midnight-ntwrk/midnight-js-indexer-public-data-provider/dist/index.mjs",
+      "file": "@midnight-ntwrk_midnight-js-indexer-public-data-provider.js",
+      "fileHash": "81f3d302",
+      "needsInterop": false
+    },
+    "@midnight-ntwrk/midnight-js-network-id": {
+      "src": "../../../node_modules/@midnight-ntwrk/midnight-js-network-id/dist/index.mjs",
+      "file": "@midnight-ntwrk_midnight-js-network-id.js",
+      "fileHash": "ce95c2a5",
+      "needsInterop": false
+    },
+    "@midnight-ntwrk/midnight-js-protocol/compact-js": {
+      "src": "../../../node_modules/@midnight-ntwrk/midnight-js-protocol/dist/compact-js.mjs",
+      "file": "@midnight-ntwrk_midnight-js-protocol_compact-js.js",
+      "fileHash": "5e8d1698",
+      "needsInterop": false
+    },
+    "@midnight-ntwrk/midnight-js-protocol/compact-runtime": {
+      "src": "../../../node_modules/@midnight-ntwrk/midnight-js-protocol/dist/compact-runtime.mjs",
+      "file": "@midnight-ntwrk_midnight-js-protocol_compact-runtime.js",
+      "fileHash": "f0920002",
+      "needsInterop": false
+    },
+    "@midnight-ntwrk/midnight-js-protocol/ledger": {
+      "src": "../../../node_modules/@midnight-ntwrk/midnight-js-protocol/dist/ledger.mjs",
+      "file": "@midnight-ntwrk_midnight-js-protocol_ledger.js",
+      "fileHash": "3584c4aa",
+      "needsInterop": false
+    },
+    "@midnight-ntwrk/midnight-js-utils": {
+      "src": "../../../node_modules/@midnight-ntwrk/midnight-js-utils/dist/index.mjs",
+      "file": "@midnight-ntwrk_midnight-js-utils.js",
+      "fileHash": "9c287276",
+      "needsInterop": false
+    },
+    "@mui/icons-material/AddCircleOutlined": {
+      "src": "../../../node_modules/@mui/icons-material/AddCircleOutlined.mjs",
+      "file": "@mui_icons-material_AddCircleOutlined.js",
+      "fileHash": "0400a315",
+      "needsInterop": false
+    },
+    "@mui/icons-material/AddLinkOutlined": {
+      "src": "../../../node_modules/@mui/icons-material/AddLinkOutlined.mjs",
+      "file": "@mui_icons-material_AddLinkOutlined.js",
+      "fileHash": "0f950d57",
+      "needsInterop": false
+    },
+    "@mui/icons-material/ContentPasteOutlined": {
+      "src": "../../../node_modules/@mui/icons-material/ContentPasteOutlined.mjs",
+      "file": "@mui_icons-material_ContentPasteOutlined.js",
+      "fileHash": "4655df64",
+      "needsInterop": false
+    },
+    "@mui/icons-material/DeleteOutlined": {
+      "src": "../../../node_modules/@mui/icons-material/DeleteOutlined.mjs",
+      "file": "@mui_icons-material_DeleteOutlined.js",
+      "fileHash": "3e4ff171",
+      "needsInterop": false
+    },
+    "@mui/icons-material/EditNoteOutlined": {
+      "src": "../../../node_modules/@mui/icons-material/EditNoteOutlined.mjs",
+      "file": "@mui_icons-material_EditNoteOutlined.js",
+      "fileHash": "9e0db018",
+      "needsInterop": false
+    },
+    "@mui/icons-material/HighlightOffOutlined": {
+      "src": "../../../node_modules/@mui/icons-material/HighlightOffOutlined.mjs",
+      "file": "@mui_icons-material_HighlightOffOutlined.js",
+      "fileHash": "b6afd3c2",
+      "needsInterop": false
+    },
+    "@mui/icons-material/Lock": {
+      "src": "../../../node_modules/@mui/icons-material/Lock.mjs",
+      "file": "@mui_icons-material_Lock.js",
+      "fileHash": "c8d4f653",
+      "needsInterop": false
+    },
+    "@mui/icons-material/LockOpen": {
+      "src": "../../../node_modules/@mui/icons-material/LockOpen.mjs",
+      "file": "@mui_icons-material_LockOpen.js",
+      "fileHash": "d268f6fe",
+      "needsInterop": false
+    },
+    "@mui/icons-material/PostAddOutlined": {
+      "src": "../../../node_modules/@mui/icons-material/PostAddOutlined.mjs",
+      "file": "@mui_icons-material_PostAddOutlined.js",
+      "fileHash": "c518b22c",
+      "needsInterop": false
+    },
+    "@mui/material": {
+      "src": "../../../node_modules/@mui/material/index.mjs",
+      "file": "@mui_material.js",
+      "fileHash": "53c22932",
+      "needsInterop": false
+    },
+    "@mui/material/CssBaseline": {
+      "src": "../../../node_modules/@mui/material/CssBaseline/index.mjs",
+      "file": "@mui_material_CssBaseline.js",
+      "fileHash": "6e0df8c7",
+      "needsInterop": false
+    },
+    "buffer": {
+      "src": "../../../node_modules/buffer/index.js",
+      "file": "buffer.js",
+      "fileHash": "77f17830",
+      "needsInterop": true
+    },
+    "fp-ts/function": {
+      "src": "../../../node_modules/fp-ts/es6/function.js",
+      "file": "fp-ts_function.js",
+      "fileHash": "f9c607af",
+      "needsInterop": false
+    },
+    "pino": {
+      "src": "../../../node_modules/pino/browser.js",
+      "file": "pino.js",
+      "fileHash": "bf3d6b3c",
+      "needsInterop": true
+    },
+    "react-dom": {
+      "src": "../../../node_modules/react-dom/index.js",
+      "file": "react-dom.js",
+      "fileHash": "415c1cce",
+      "needsInterop": true
+    },
+    "react-dom/client": {
+      "src": "../../../node_modules/react-dom/client.js",
+      "file": "react-dom_client.js",
+      "fileHash": "50018041",
+      "needsInterop": true
+    },
+    "react": {
+      "src": "../../../node_modules/react/index.js",
+      "file": "react.js",
+      "fileHash": "68821679",
+      "needsInterop": true
+    },
+    "react/jsx-dev-runtime": {
+      "src": "../../../node_modules/react/jsx-dev-runtime.js",
+      "file": "react_jsx-dev-runtime.js",
+      "fileHash": "fd0ead70",
+      "needsInterop": true
+    },
+    "react/jsx-runtime": {
+      "src": "../../../node_modules/react/jsx-runtime.js",
+      "file": "react_jsx-runtime.js",
+      "fileHash": "70b22129",
+      "needsInterop": true
+    },
+    "rxjs": {
+      "src": "../../../node_modules/rxjs/dist/esm5/index.js",
+      "file": "rxjs.js",
+      "fileHash": "b3604875",
+      "needsInterop": false
+    },
+    "semver": {
+      "src": "../../../node_modules/semver/index.js",
+      "file": "semver.js",
+      "fileHash": "1fcdd649",
+      "needsInterop": true
+    }
+  },
+  "chunks": {
+    "CssBaseline-CgJtYR5F": {
+      "file": "CssBaseline-CgJtYR5F.js",
+      "isDynamicEntry": false
+    },
+    "DefaultPropsProvider-L9m6bFy3": {
+      "file": "DefaultPropsProvider-L9m6bFy3.js",
+      "isDynamicEntry": false
+    },
+    "ZKConfiguration-D8OU2fUI": {
+      "file": "ZKConfiguration-D8OU2fUI.js",
+      "isDynamicEntry": false
+    },
+    "browser-ponyfill-CY0ElSBd": {
+      "file": "browser-ponyfill-CY0ElSBd.js",
+      "isDynamicEntry": false
+    },
+    "buffer-fJKDzc2O": {
+      "file": "buffer-fJKDzc2O.js",
+      "isDynamicEntry": false
+    },
+    "compact-js-D7n5cB1M": {
+      "file": "compact-js-D7n5cB1M.js",
+      "isDynamicEntry": false
+    },
+    "compact-runtime-CkZwn_U6": {
+      "file": "compact-runtime-CkZwn_U6.js",
+      "isDynamicEntry": false
+    },
+    "createSvgIcon-BhcW0b96": {
+      "file": "createSvgIcon-BhcW0b96.js",
+      "isDynamicEntry": false
+    },
+    "dist-BzQS3cJ9": {
+      "file": "dist-BzQS3cJ9.js",
+      "isDynamicEntry": false
+    },
+    "dist-HqXgcb0A": {
+      "file": "dist-HqXgcb0A.js",
+      "isDynamicEntry": false
+    },
+    "dist-kWetnQ9n": {
+      "file": "dist-kWetnQ9n.js",
+      "isDynamicEntry": false
+    },
+    "dist-lrxkyrfs": {
+      "file": "dist-lrxkyrfs.js",
+      "isDynamicEntry": false
+    },
+    "esm5-CnDZMfhu": {
+      "file": "esm5-CnDZMfhu.js",
+      "isDynamicEntry": false
+    },
+    "jsx-runtime-Q7cvWsLl": {
+      "file": "jsx-runtime-Q7cvWsLl.js",
+      "isDynamicEntry": false
+    },
+    "ledger-ClaFFssL": {
+      "file": "ledger-ClaFFssL.js",
+      "isDynamicEntry": false
+    },
+    "midnight_ledger_wasm-CLkQiOxX": {
+      "file": "midnight_ledger_wasm-CLkQiOxX.js",
+      "isDynamicEntry": false
+    },
+    "react-CG4JYB8F": {
+      "file": "react-CG4JYB8F.js",
+      "isDynamicEntry": false
+    },
+    "react-dom-BAUFP_Nq": {
+      "file": "react-dom-BAUFP_Nq.js",
+      "isDynamicEntry": false
+    },
+    "rolldown-runtime-CoDluQUr": {
+      "file": "rolldown-runtime-CoDluQUr.js",
+      "isDynamicEntry": false
+    }
+  }
+}
