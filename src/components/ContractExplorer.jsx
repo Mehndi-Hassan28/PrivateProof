@@ -19,7 +19,7 @@ export const ContractExplorer = () => {
   const [activeTab, setActiveTab] = useState('compact');
   const [copiedAddr, setCopiedAddr] = useState(false);
 
-  const CONTRACT_ADDRESS = "02008f1b635293da2768e1c64dfc6dfad1712a32c66c3c54d7f573dc086e33ecb2";
+  const CONTRACT_ADDRESS = "0200dbf964f541e1950883f5b2f539b66fd6111e46ce8e6e9551fbdd180114d5dd5b";
 
   useEffect(() => {
     const loadData = async () => {

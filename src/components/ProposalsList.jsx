@@ -142,7 +142,7 @@ export const ProposalsList = ({ onSelectProposal, onOpenInspector }) => {
           <div className="p-4 rounded-2xl bg-slate-950/70 border border-slate-800/80 backdrop-blur-md hover:border-sky-500/30 transition-colors">
             <div className="text-[10px] font-mono text-slate-400 uppercase tracking-wider">Deployed Preprod</div>
             <div className="text-xs font-mono text-emerald-400 font-bold mt-2 truncate">
-              02008f1b...ecb2
+              0200dbf9...dd5b
             </div>
           </div>
         </div>

@@ -4,6 +4,14 @@
   "private": true,
   "dependencies": {
     "@hookform/resolvers": "5.0.1",
+    "@midnight-ntwrk/compact-runtime": "0.7.0",
+    "@midnight-ntwrk/dapp-connector-api": "0.7.0",
+    "@midnight-ntwrk/midnight-js-contracts": "0.7.0",
+    "@midnight-ntwrk/midnight-js-fetch-zk-config-provider": "0.7.0",
+    "@midnight-ntwrk/midnight-js-http-client-proof-provider": "0.7.0",
+    "@midnight-ntwrk/midnight-js-indexer-public-data-provider": "0.7.0",
+    "@midnight-ntwrk/midnight-js-network-id": "0.7.0",
+    "@midnight-ntwrk/midnight-js-utils": "0.7.0",
     "@radix-ui/react-accordion": "1.2.8",
     "@radix-ui/react-alert-dialog": "1.1.11",
     "@radix-ui/react-aspect-ratio": "1.1.4",
@@ -63,7 +71,9 @@
   "scripts": {
     "start": "craco start",
     "build": "craco build",
-    "test": "craco test"
+    "test": "craco test",
+    "compile:compact": "./scripts/compile_compact.sh",
+    "deploy:preprod": "node scripts/deploy.js"
   },
   "browserslist": {
     "production": [

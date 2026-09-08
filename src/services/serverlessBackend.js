@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const CONTRACT_ADDRESS = "02008f1b635293da2768e1c64dfc6dfad1712a32c66c3c54d7f573dc086e33ecb2";
+const CONTRACT_ADDRESS = "0200dbf964f541e1950883f5b2f539b66fd6111e46ce8e6e9551fbdd180114d5dd5b";
 const NETWORK_NAME = "Midnight Preprod (Testnet-0.23)";
 const VERIFIER_DIGEST = "0x94f6c31a77918d2fbb4a91902bbdc327cfd720b001a1c93a0279cbe0d3bb639a";
 

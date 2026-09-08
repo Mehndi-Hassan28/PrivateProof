@@ -14,9 +14,9 @@
 - **🌐 Live Production dApp**: [https://private-proof.vercel.app/](https://private-proof.vercel.app/)
 - **🎥 YouTube Demo Video**: [https://www.youtube.com/watch?v=VgpHkUUDYrM](https://www.youtube.com/watch?v=VgpHkUUDYrM)
 - **📜 Deployed Contract Address (Midnight Preprod)**:  
-  `02008f1b635293da2768e1c64dfc6dfad1712a32c66c3c54d7f573dc086e33ecb2`
+  `0200dbf964f541e1950883f5b2f539b66fd6111e46ce8e6e9551fbdd180114d5dd5b`
 - **🔎 Midnight Preprod Explorer**:  
-  [https://explorer.preprod.midnight.network/contract/02008f1b635293da2768e1c64dfc6dfad1712a32c66c3c54d7f573dc086e33ecb2](https://explorer.preprod.midnight.network/contract/02008f1b635293da2768e1c64dfc6dfad1712a32c66c3c54d7f573dc086e33ecb2)
+  [https://explorer.preprod.midnight.network/contract/0200dbf964f541e1950883f5b2f539b66fd6111e46ce8e6e9551fbdd180114d5dd5b](https://explorer.preprod.midnight.network/contract/0200dbf964f541e1950883f5b2f539b66fd6111e46ce8e6e9551fbdd180114d5dd5b)
 - **💻 Public GitHub Repository**:  
   [https://github.com/Mehndi-Hassan28/PrivateProof](https://github.com/Mehndi-Hassan28/PrivateProof)
 
@@ -45,11 +45,11 @@
 
 - **Target Network**: Midnight Preprod (Testnet-0.23)
 - **Deployed Contract Address**:  
-  `02008f1b635293da2768e1c64dfc6dfad1712a32c66c3c54d7f573dc086e33ecb2`
+  `0200dbf964f541e1950883f5b2f539b66fd6111e46ce8e6e9551fbdd180114d5dd5b`
 - **Verifier Key Digest**:  
   `0x94f6c31a77918d2fbb4a91902bbdc327cfd720b001a1c93a0279cbe0d3bb639a`
 - **Midnight Explorer URL**:  
-  `https://explorer.preprod.midnight.network/contract/02008f1b635293da2768e1c64dfc6dfad1712a32c66c3c54d7f573dc086e33ecb2`
+  `https://explorer.preprod.midnight.network/contract/0200dbf964f541e1950883f5b2f539b66fd6111e46ce8e6e9551fbdd180114d5dd5b`
 
 ---
 

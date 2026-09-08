@@ -1,5 +1,5 @@
 describe('PrivateVote Zero-Knowledge Governance Test Suite', () => {
-  const CONTRACT_ADDRESS = '02008f1b635293da2768e1c64dfc6dfad1712a32c66c3c54d7f573dc086e33ecb2';
+  const CONTRACT_ADDRESS = '0200dbf964f541e1950883f5b2f539b66fd6111e46ce8e6e9551fbdd180114d5dd5b';
 
   test('TEST-01: Nullifier Determinism & Double-Voting Isolation', () => {
     const voterSecret = '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef';
@@ -46,8 +46,8 @@ describe('PrivateVote Zero-Knowledge Governance Test Suite', () => {
   });
 
   test('TEST-05: Midnight Preprod Deployed Contract Address Format', () => {
-    expect(CONTRACT_ADDRESS).toHaveLength(66);
-    expect(CONTRACT_ADDRESS).toMatch(/^[0-9a-f]{66}$/);
-    expect(CONTRACT_ADDRESS.startsWith('02008f1b')).toBe(true);
+    expect(CONTRACT_ADDRESS).toHaveLength(68);
+    expect(CONTRACT_ADDRESS).toMatch(/^[0-9a-f]{68}$/);
+    expect(CONTRACT_ADDRESS.startsWith('0200dbf9')).toBe(true);
   });
 });

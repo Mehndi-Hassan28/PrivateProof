@@ -28,7 +28,7 @@ export const Navbar = ({ activeTab, setActiveTab }) => {
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [copied, setCopied] = useState(false);
-  const CONTRACT_ADDRESS = "02008f1b635293da2768e1c64dfc6dfad1712a32c66c3c54d7f573dc086e33ecb2";
+  const CONTRACT_ADDRESS = "0200dbf964f541e1950883f5b2f539b66fd6111e46ce8e6e9551fbdd180114d5dd5b";
 
   const copyContractAddress = () => {
     navigator.clipboard.writeText(CONTRACT_ADDRESS);
@@ -141,7 +141,7 @@ export const Navbar = ({ activeTab, setActiveTab }) => {
               className="flex items-center space-x-1.5 px-3 py-2 rounded-2xl bg-slate-900 border border-slate-800 text-xs font-mono text-slate-400 hover:text-sky-300 hover:border-sky-500/40 transition-all shadow-sm"
             >
               <span className="text-slate-500">Contract:</span>
-              <span className="text-sky-400 font-bold">02008f1b...</span>
+              <span className="text-sky-400 font-bold">0200dbf9...</span>
               {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5 opacity-60" />}
             </button>
 
@@ -270,7 +270,7 @@ export const Navbar = ({ activeTab, setActiveTab }) => {
               onClick={copyContractAddress}
               className="w-full p-3 rounded-2xl bg-slate-900 border border-slate-800 text-xs font-mono text-slate-400 flex items-center justify-between"
             >
-              <span>Contract: 02008f1b...ecb2</span>
+              <span>Contract: 0200dbf9...ecb2</span>
               {copied ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4 text-slate-500" />}
             </button>
 
