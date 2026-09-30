@@ -14,7 +14,7 @@ export const CreateProposalModal = ({ isOpen, onClose }) => (
         <DialogDescription className="text-slate-400">No proposal or transaction has been created.</DialogDescription>
       </DialogHeader>
       <p className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-4 text-sm leading-relaxed text-amber-100">
-        Proposal creation needs the shared multi-proposal Compact contract to be compiled, deployed, and configured. The checked-in generated contract module is incomplete, so this action is disabled.
+          The shared Compact contract now includes a createProposal circuit that records a proposal ID and metadata commitments on-chain. Proposal submission stays disabled until the contract is fully compiled with proving keys, deployed, and connected to the wallet transaction provider.
       </p>
       <Button onClick={onClose} className="w-full">Close</Button>
     </DialogContent>

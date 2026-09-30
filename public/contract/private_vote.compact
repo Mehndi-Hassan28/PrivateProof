@@ -6,6 +6,7 @@ import CompactStandardLibrary;
 // caller-supplied 32-byte domain identifiers; every per-proposal value is
 // keyed by that id.
 export ledger proposalTitleHashes: Map<Bytes<32>, Bytes<32>>;
+export ledger proposalDescriptionHashes: Map<Bytes<32>, Bytes<32>>;
 export ledger proposalStatus: Map<Bytes<32>, Uint<8>>;
 export ledger proposalAdminCommitments: Map<Bytes<32>, Bytes<32>>;
 export ledger proposalEligibilityRoots: Map<Bytes<32>, MerkleTreeDigest>;
@@ -31,15 +32,20 @@ circuit deriveVoteCommitment(choice: Uint<8>, blinding: Bytes<32>): Bytes<32> {
   return persistentHash<Vector<2, Bytes<32>>>([choiceBytes, blinding]);
 }
 
-export circuit initializeProposal(
+// Creates one proposal in the shared contract. The full text remains off-chain;
+// the title and description hashes let clients verify that metadata against
+// the on-chain record. The proposal id must be a unique 32-byte value.
+export circuit createProposal(
   proposalId: Bytes<32>,
   titleHash: Bytes<32>,
+  descriptionHash: Bytes<32>,
   adminCommitment: Bytes<32>,
   eligibilityRoot: MerkleTreeDigest
 ): [] {
   const id = disclose(proposalId);
   assert(!proposalStatus.member(id), "Proposal already exists");
   proposalTitleHashes.insert(id, disclose(titleHash));
+  proposalDescriptionHashes.insert(id, disclose(descriptionHash));
   proposalStatus.insert(id, 1);
   proposalAdminCommitments.insert(id, disclose(adminCommitment));
   proposalEligibilityRoots.insert(id, disclose(eligibilityRoot));
