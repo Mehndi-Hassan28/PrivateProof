@@ -9,10 +9,7 @@ import {
   X,
   User,
   Vote,
-  Eye,
-  Cpu,
   Server,
-  ShieldCheck,
 } from 'lucide-react';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
@@ -28,9 +25,10 @@ export const Navbar = ({ activeTab, setActiveTab }) => {
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [copied, setCopied] = useState(false);
-  const CONTRACT_ADDRESS = "0200dbf964f541e1950883f5b2f539b66fd6111e46ce8e6e9551fbdd180114d5dd5b";
+  const CONTRACT_ADDRESS = process.env.REACT_APP_CONTRACT_ADDRESS || '';
 
   const copyContractAddress = () => {
+    if (!CONTRACT_ADDRESS) { toast.error('No deployed contract address configured'); return; }
     navigator.clipboard.writeText(CONTRACT_ADDRESS);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
@@ -39,10 +37,7 @@ export const Navbar = ({ activeTab, setActiveTab }) => {
 
   const navItems = [
     { id: 'proposals', label: 'Proposals', icon: Vote },
-    { id: 'inspector', label: 'Privacy', icon: Eye },
-    { id: 'playground', label: 'ZK Sandbox', icon: Cpu },
     { id: 'contract', label: 'Node & Contract', icon: Server },
-    { id: 'tests', label: 'Test Suite', icon: ShieldCheck },
     { id: 'profile', label: 'Profile', icon: User },
   ];
 
@@ -73,10 +68,9 @@ export const Navbar = ({ activeTab, setActiveTab }) => {
                 </span>
                 <Badge
                   data-testid="network-status-badge"
-                  className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-[9px] sm:text-[10px] font-mono px-1.5 py-0.5"
+                  className="bg-slate-800 text-slate-300 border border-slate-700 text-[9px] sm:text-[10px] font-mono px-1.5 py-0.5"
                 >
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block mr-1 animate-ping"></span>
-                  Preprod
+                  Preprod target
                 </Badge>
               </div>
               <p className="text-[10px] text-slate-400 font-mono hidden xl:block">
@@ -141,7 +135,7 @@ export const Navbar = ({ activeTab, setActiveTab }) => {
               className="flex items-center space-x-1.5 px-3 py-2 rounded-2xl bg-slate-900 border border-slate-800 text-xs font-mono text-slate-400 hover:text-sky-300 hover:border-sky-500/40 transition-all shadow-sm"
             >
               <span className="text-slate-500">Contract:</span>
-              <span className="text-sky-400 font-bold">0200dbf9...</span>
+              <span className="text-sky-400 font-bold">{CONTRACT_ADDRESS ? `${CONTRACT_ADDRESS.slice(0, 8)}...` : 'Not deployed'}</span>
               {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5 opacity-60" />}
             </button>
 
@@ -176,7 +170,7 @@ export const Navbar = ({ activeTab, setActiveTab }) => {
                 className="bg-gradient-to-r from-sky-500 via-indigo-600 to-purple-600 hover:from-sky-400 hover:to-purple-500 text-white font-mono text-xs px-4 py-2.5 rounded-2xl font-bold shadow-[0_0_20px_rgba(56,189,248,0.35)] transition-all flex items-center space-x-2 transform hover:-translate-y-0.5"
               >
                 <Wallet className="w-4 h-4" />
-                <span>Connect Lace</span>
+                <span>Connect wallet</span>
               </Button>
             )}
           </div>
@@ -270,7 +264,7 @@ export const Navbar = ({ activeTab, setActiveTab }) => {
               onClick={copyContractAddress}
               className="w-full p-3 rounded-2xl bg-slate-900 border border-slate-800 text-xs font-mono text-slate-400 flex items-center justify-between"
             >
-              <span>Contract: 0200dbf9...ecb2</span>
+              <span>Contract: {CONTRACT_ADDRESS ? `${CONTRACT_ADDRESS.slice(0, 8)}...` : 'Not deployed'}</span>
               {copied ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4 text-slate-500" />}
             </button>
 
@@ -280,7 +274,7 @@ export const Navbar = ({ activeTab, setActiveTab }) => {
                 onClick={disconnectWallet}
                 className="w-full border-rose-500/30 text-rose-400 hover:bg-rose-500/10 font-mono text-xs py-3 rounded-2xl font-bold"
               >
-                Disconnect Lace Wallet
+                Disconnect wallet
               </Button>
             ) : (
               <Button
@@ -290,7 +284,7 @@ export const Navbar = ({ activeTab, setActiveTab }) => {
                 }}
                 className="w-full bg-gradient-to-r from-sky-500 to-indigo-600 text-white font-mono text-xs py-3.5 rounded-2xl font-bold shadow-[0_0_20px_rgba(56,189,248,0.3)]"
               >
-                Connect Lace Wallet
+                Connect wallet
               </Button>
             )}
           </div>

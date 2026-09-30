@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useWallet } from '../context/WalletContext';
 import { PrivateVoteModal } from './PrivateVoteModal';
 import { CreateProposalModal } from './CreateProposalModal';
-import { ZkShieldIllustration } from './art/ZkShieldIllustration';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Input } from './ui/input';
@@ -13,14 +12,13 @@ import {
   Search,
   Lock,
   RefreshCw,
-  Eye,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import axios from 'axios';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || '';
 
-export const ProposalsList = ({ onSelectProposal, onOpenInspector }) => {
+export const ProposalsList = ({ onSelectProposal }) => {
   const { isConnected, setIsLaceModalOpen } = useWallet();
   const [proposals, setProposals] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -63,7 +61,7 @@ export const ProposalsList = ({ onSelectProposal, onOpenInspector }) => {
 
   const handleOpenVote = (proposal) => {
     if (!isConnected) {
-      toast.info('Please connect Lace Wallet to participate in private voting.');
+      toast.info('Connect a Midnight wallet to continue.');
       setIsLaceModalOpen(true);
       return;
     }
@@ -77,12 +75,12 @@ export const ProposalsList = ({ onSelectProposal, onOpenInspector }) => {
         <div className="absolute top-0 right-0 -mr-24 -mt-24 w-96 h-96 rounded-full bg-sky-500/10 blur-3xl pointer-events-none"></div>
         <div className="absolute bottom-0 left-0 -ml-24 -mb-24 w-96 h-96 rounded-full bg-purple-500/10 blur-3xl pointer-events-none"></div>
 
-        <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        <div className="relative z-10">
           {/* Left Column: Headline & Call To Action */}
-          <div className="lg:col-span-7 space-y-5">
+          <div className="space-y-5">
             <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-sky-500/10 border border-sky-500/30 text-sky-400 text-xs font-mono shadow-[0_0_15px_rgba(56,189,248,0.2)]">
               <Shield className="w-3.5 h-3.5 text-sky-400" />
-              <span>Midnight Dual-State Privacy Governance</span>
+              <span>Midnight governance interface</span>
             </div>
 
             <h1 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white leading-tight">
@@ -91,7 +89,7 @@ export const ProposalsList = ({ onSelectProposal, onOpenInspector }) => {
             </h1>
 
             <p className="text-slate-300 text-sm sm:text-base leading-relaxed font-sans max-w-xl">
-              PrivateVote leverages Midnight Network's Zero-Knowledge circuits. Submit verifiable ballots to community proposals while your personal vote choice and voter secret remain strictly off-chain.
+              Proposal and ballot actions become available after the shared Compact contract is compiled and deployed. This interface only reports proposal data returned by the configured API.
             </p>
 
             <div className="pt-2 flex flex-wrap items-center gap-3">
@@ -103,26 +101,13 @@ export const ProposalsList = ({ onSelectProposal, onOpenInspector }) => {
                 <Plus className="w-4 h-4" />
                 <span>Create Proposal</span>
               </Button>
-              <Button
-                data-testid="hero-inspect-privacy-btn"
-                variant="outline"
-                onClick={() => onOpenInspector(proposals[0]?.id || 'prop-mid-001')}
-                className="border-slate-700 bg-slate-900/80 hover:bg-slate-800 text-slate-300 font-mono text-xs px-5 py-3 rounded-xl flex items-center space-x-2 transition-all"
-              >
-                <Eye className="w-4 h-4 text-sky-400" />
-                <span>Inspect Privacy Model</span>
-              </Button>
             </div>
           </div>
 
-          {/* Right Column: High Quality SVG Vector Artwork */}
-          <div className="lg:col-span-5 flex justify-center items-center">
-            <ZkShieldIllustration className="w-full max-w-sm sm:max-w-md transform hover:scale-102 transition-transform duration-300 filter drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)]" />
-          </div>
         </div>
 
         {/* Quick Stats Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-10 pt-6 border-t border-slate-800/80">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-10 pt-6 border-t border-slate-800/80">
           <div className="p-4 rounded-2xl bg-slate-950/70 border border-slate-800/80 backdrop-blur-md hover:border-sky-500/30 transition-colors">
             <div className="text-[10px] font-mono text-slate-400 uppercase tracking-wider">Active Proposals</div>
             <div data-testid="stat-active-proposals" className="text-2xl font-heading font-black text-white mt-1">
@@ -136,13 +121,9 @@ export const ProposalsList = ({ onSelectProposal, onOpenInspector }) => {
             </div>
           </div>
           <div className="p-4 rounded-2xl bg-slate-950/70 border border-slate-800/80 backdrop-blur-md hover:border-sky-500/30 transition-colors">
-            <div className="text-[10px] font-mono text-slate-400 uppercase tracking-wider">Circuit Constraints</div>
-            <div className="text-2xl font-heading font-black text-purple-400 mt-1">3,840 R1CS</div>
-          </div>
-          <div className="p-4 rounded-2xl bg-slate-950/70 border border-slate-800/80 backdrop-blur-md hover:border-sky-500/30 transition-colors">
-            <div className="text-[10px] font-mono text-slate-400 uppercase tracking-wider">Deployed Preprod</div>
+            <div className="text-[10px] font-mono text-slate-400 uppercase tracking-wider">Contract deployment</div>
             <div className="text-xs font-mono text-emerald-400 font-bold mt-2 truncate">
-              0200dbf9...dd5b
+              No deployment configured
             </div>
           </div>
         </div>
@@ -214,7 +195,7 @@ export const ProposalsList = ({ onSelectProposal, onOpenInspector }) => {
       {loading ? (
         <div className="py-24 text-center space-y-3 font-mono text-xs text-slate-400">
           <div className="w-10 h-10 border-2 border-sky-400 border-t-transparent rounded-full animate-spin mx-auto"></div>
-          <p>Querying Midnight Preprod ledger & nullifier sets...</p>
+              <p>Loading proposals from the configured API...</p>
         </div>
       ) : filteredProposals.length === 0 ? (
         <div

@@ -1,180 +1,61 @@
-# PrivateVote — Confidential Governance on Midnight Network
+# PrivateProof
 
-[![PrivateVote Midnight CI/CD Pipeline](https://github.com/Mehndi-Hassan28/PrivateProof/actions/workflows/ci.yml/badge.svg)](https://github.com/Mehndi-Hassan28/PrivateProof/actions)
-![Midnight Preprod](https://img.shields.io/badge/Network-Midnight%20Preprod%20(Testnet--0.23)-38bdf8?style=flat-square)
-![Compact Compiler](https://img.shields.io/badge/Compiler-Compact%20v0.23.4-a78bfa?style=flat-square)
-![ZK Curve](https://img.shields.io/badge/ZK--SNARK-BN254%20(3840%20Constraints)-10b981?style=flat-square)
-[![Live Demo](https://img.shields.io/badge/Live%20dApp-private--proof.vercel.app-000000?style=flat-square&logo=vercel)](https://private-proof.vercel.app/)
-[![YouTube Demo](https://img.shields.io/badge/Demo%20Video-YouTube-ff0000?style=flat-square&logo=youtube)](https://www.youtube.com/watch?v=VgpHkUUDYrM)
+PrivateProof is a React interface and Node API for a planned Midnight governance dApp.
 
----
+## Current implementation status
 
-## 🌐 Hackathon Submission Links & Details
+- The frontend connects to installed Midnight wallets exposed through `window.midnight` (including Lace and 1AM) using the wallet DApp Connector API.
+- The API reads live Preprod node health from Midnight RPC.
+- The API reads proposal metadata from MongoDB when `MONGODB_URI` is configured.
+- No proposal, proof, vote, transaction, wallet balance, or contract address is fabricated by the app.
+- Proposal creation and voting are disabled. The single-contract, multi-proposal Compact source is in `public/contract/private_vote.compact`, but this checkout does not have usable proof keys or the Midnight.js transaction provider needed to deploy or call it.
+- MongoDB transaction persistence and wallet authentication are not enabled. The app never receives wallet secrets or stores wallet credentials.
 
-- **🌐 Live Production dApp**: [https://private-proof.vercel.app/](https://private-proof.vercel.app/)
-- **🎥 YouTube Demo Video**: [https://www.youtube.com/watch?v=VgpHkUUDYrM](https://www.youtube.com/watch?v=VgpHkUUDYrM)
-- **📜 Deployed Contract Address (Midnight Preprod)**:  
-  `0200dbf964f541e1950883f5b2f539b66fd6111e46ce8e6e9551fbdd180114d5dd5b`
-- **🔎 Midnight Preprod Explorer**:  
-  [https://explorer.preprod.midnight.network/contract/0200dbf964f541e1950883f5b2f539b66fd6111e46ce8e6e9551fbdd180114d5dd5b](https://explorer.preprod.midnight.network/contract/0200dbf964f541e1950883f5b2f539b66fd6111e46ce8e6e9551fbdd180114d5dd5b)
-- **💻 Public GitHub Repository**:  
-  [https://github.com/Mehndi-Hassan28/PrivateProof](https://github.com/Mehndi-Hassan28/PrivateProof)
+The old generated JavaScript, keys, and ZKIR files were removed because they were placeholders rather than compiler output. `npm run compile:compact` invokes the real Compact compiler and fails if key generation fails; it does not report a mock build as success.
 
----
+## Requirements
 
-## 📸 Submission Screenshots & Verification Evidence
+- Node.js 20 or newer
+- x86-64 CPU with the instruction set required by the Compact prover-key generator
+- npm
+- A MongoDB Atlas URI to populate proposal metadata (optional while inspecting the app)
+- Lace or 1AM browser extension for wallet connection
 
-### 1. Successful Compact Contract Compilation (Circuits Listed)
-![Compact Contract Compilation Output](public/terminal.png)
+## Run locally
 
-### 2. Deployed Contract Address & Midnight Preprod Node Status
-![Deployed Contract Address & Preprod Node Status](public/deployed_contract.png)
-
-### 3. Automated Test Output (5/5 Passing Tests)
-![Automated Test Output](public/test_output.png)
-
----
-
-## 💡 Product Idea & Overview
-
-**PrivateVote** is a privacy-preserving zero-knowledge governance platform built on the Midnight Network that enables token holders to cast verifiable votes on community proposals while guaranteeing 100% ballot secrecy and identity protection. By synthesizing client-side BN254 zk-SNARK proofs using Compact smart contract circuits, PrivateVote decouples voter identity from public tallies—allowing decentralized organizations to eliminate voter intimidation, coercion, and bandwagon bias while maintaining mathematical transparency and double-voting prevention.
-
----
-
-## 📜 Deployed Midnight Smart Contract
-
-- **Target Network**: Midnight Preprod (Testnet-0.23)
-- **Deployed Contract Address**:  
-  `0200dbf964f541e1950883f5b2f539b66fd6111e46ce8e6e9551fbdd180114d5dd5b`
-- **Verifier Key Digest**:  
-  `0x94f6c31a77918d2fbb4a91902bbdc327cfd720b001a1c93a0279cbe0d3bb639a`
-- **Midnight Explorer URL**:  
-  `https://explorer.preprod.midnight.network/contract/0200dbf964f541e1950883f5b2f539b66fd6111e46ce8e6e9551fbdd180114d5dd5b`
-
----
-
-## 🔒 Privacy Model: What an Observer Can and Cannot Learn
-
-Midnight’s dual-state architecture explicitly demarcates public ledger state from client-side private witness computation. The table below details the privacy guarantees enforced by the `castPrivateVote` Compact circuit:
-
-| Data Point | Public Ledger Visibility | Cryptographic Justification |
-| :--- | :---: | :--- |
-| **Individual Vote Choice** (Yes / No / Abstain) | 🔒 **100% Shielded** | Processed strictly inside the voter's browser witness. Blinded via random blinding factor $H(\text{choice} \parallel \text{salt})$. |
-| **Voter Secret Key / Identity** | 🔒 **100% Shielded** | Off-chain secret seed ($sk$) never leaves browser memory. Protected by one-way domain-separated hashes. |
-| **Nullifier Hash** $H(sk \parallel \text{proposal\_id})$ | 🌐 **Public On-Chain** | Deterministically derived per proposal; published on ledger to guarantee voters cannot vote twice without linking identities. |
-| **Total Ballots & Aggregated Tallies** | 🌐 **Public On-Chain** | Public aggregate counts maintained on-chain for verifiability. |
-| **Zero-Knowledge Proof** $(\pi_a, \pi_b, \pi_c)$ | 🌐 **Public On-Chain** | Groth16/Plonk BN254 proof verifying 3,840 circuit constraints without revealing witness inputs. |
-
-### Observable Privacy Behavior
-
-1. **Double-Voting Prevention**: If a user attempts to vote twice using the same secret key, the circuit derives an identical nullifier. The on-chain assertion `assert(!ledger.nullifiers.member(nullifier))` triggers a cryptographic rejection—proving double voting is prevented **without disclosing who the voter is or how they previously voted**.
-2. **Ballot Blinding**: Two identical vote options produce distinct cryptographic ballot commitments due to fresh entropy blinding factors, preventing dictionary / rainbow table attacks.
-
----
-
-## 📁 Repository Structure & Managed Artifacts
-
-```
-PrivateProof/
-├── .github/workflows/ci.yml       # GitHub Actions CI/CD Pipeline
-├── vercel.json                    # Single-click Vercel static deployment config
-├── public/contract/               # Compiled Compact artifacts & source
-│   ├── private_vote.compact       # Smart contract source code
-│   ├── private_vote.zkir          # Intermediate Representation
-│   ├── private_vote.bzkir         # Binary ZKIR
-│   ├── private_vote.prover        # ZK Prover key
-│   ├── private_vote.verifier      # ZK Verifier key
-│   ├── contract-info.json         # Compiler info
-│   └── contract-manifest.json     # Circuit constraints manifest
-├── managed/private_vote/          # Generated managed artifacts directory
-│   ├── contract/                  # TypeScript runtime & type definitions
-│   ├── zkir/                      # ZKIR AST outputs
-│   ├── keys/                      # Prover & verifier keys
-│   └── compiler/                  # Metadata
-├── scripts/
-│   └── compile_compact.sh         # Compact compiler runner script
-├── src/
-│   ├── components/                # React UI components & modals
-│   │   ├── ProposalsList.jsx      # Proposals dashboard
-│   │   ├── PrivateVoteModal.jsx   # 4-Step ZK voting wizard
-│   │   ├── PrivacyInspector.jsx   # Public vs Private dual-state inspector
-│   │   ├── ZKPlayground.jsx       # Interactive ZK sandbox
-│   │   ├── TestSuiteViewer.jsx    # Automated verification test suite
-│   │   ├── UserProfile.jsx        # User profile & key manager
-│   │   └── LaceWalletModal.jsx    # Lace wallet connect & secret manager
-│   ├── context/
-│   │   └── WalletContext.js       # Lace wallet session state
-│   ├── services/
-│   │   └── serverlessBackend.js   # Serverless Web Crypto ZK engine
-│   ├── App.js                     # Main layout & router
-│   └── index.js                   # Application entry point
-├── craco.config.js                # Webpack dev server config
-├── tailwind.config.js             # Styling tokens
-├── test_credentials.md            # Test keys & sample preprod accounts
-└── package.json
-```
-
----
-
-## 🧪 Automated Verification Test Suite
-
-PrivateVote includes 5 automated verification tests built into the dApp (viewable in the **Test Suite & CI/CD** tab) and executed via Jest CLI:
+Install the frontend and API dependencies:
 
 ```bash
-yarn test --watchAll=false
+npm install --legacy-peer-deps
 ```
 
-```
-PASS src/App.test.js
-  PrivateVote Zero-Knowledge Governance Test Suite
-    ✓ TEST-01: Nullifier Determinism & Double-Voting Isolation (1 ms)
-    ✓ TEST-02: Ballot Commitment Blinding & Choice Hiding (1 ms)
-    ✓ TEST-03: zk-SNARK R1CS Constraint Verification on BN254 curve
-    ✓ TEST-04: Compact Smart Contract Managed Artifacts & Manifest Integrity
-    ✓ TEST-05: Midnight Preprod Deployed Contract Address Format (1 ms)
+Configure the browser API URL in `.env`:
 
-Test Suites: 1 passed, 1 total
-Tests:       5 passed, 5 total
-Snapshots:   0 total
-Time:        0.471 s
+```dotenv
+REACT_APP_BACKEND_URL=http://localhost:8000
+REACT_APP_CONTRACT_ADDRESS=
 ```
 
----
+Set server settings in the environment or root `.env` file. Never commit the Atlas URI:
 
-## 🛠️ Local Development & Setup Instructions
+```dotenv
+MONGODB_URI=
+MONGODB_DB=privateproof
+MIDNIGHT_RPC_URL=https://rpc.preprod.midnight.network
+PORT=8000
+```
 
-### Prerequisites
-- **Node.js**: `v20.x` or higher
-- **Yarn**: `v1.22.x`
+Run the API and frontend in separate terminals:
 
-### 1. Install Dependencies
 ```bash
-yarn install
+npm run start:server
+npm start
 ```
 
-### 2. Run Test Suite
-```bash
-yarn test --watchAll=false
-```
+The frontend is served at `http://localhost:3000`; API health is at `http://localhost:8000/health`. Without `MONGODB_URI`, proposal reads return HTTP 503. The network status endpoint still queries Midnight Preprod RPC.
 
-### 3. Run Application Locally
-```bash
-yarn start
-```
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+## Configuration
 
-### 4. Build Production Bundle & Deploy
-```bash
-yarn build
-```
-The static production bundle will be generated in `build/`, ready to deploy to Vercel, Netlify, or GitHub Pages.
+`CONTRACT_ADDRESS` is a server environment variable. `REACT_APP_CONTRACT_ADDRESS` is a public frontend setting. Set both only after a successful deployment. Contract addresses cannot be generated independently of a deployment transaction.
 
----
-
-## 🚀 CI/CD Pipeline
-
-The GitHub Actions workflow (`.github/workflows/ci.yml`) automatically executes on every push:
-1. Validates `private_vote.compact` smart contract compilation.
-2. Asserts presence of `managed/` directory (circuits, keys, AST, manifest).
-3. Executes automated Jest test suite (5/5 tests passing).
-4. Installs dependencies and builds the static production application.
+The API intentionally does not write proposal or transaction records until the frontend can submit and confirm the corresponding real contract transactions.

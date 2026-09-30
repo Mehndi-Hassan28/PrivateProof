@@ -2,151 +2,89 @@ pragma language_version 0.23;
 
 import CompactStandardLibrary;
 
-// =========================================================================
-// PrivateVote: Privacy-Preserving Community Voting Smart Contract
-// Target Network: Midnight Network (Preprod / Preview)
-// Model: Dual-state ZK-SNARK with Nullifier Commit-Reveal & Homomorphic Tally
-// =========================================================================
+// A single contract stores many independent proposals. Proposal ids are
+// caller-supplied 32-byte domain identifiers; every per-proposal value is
+// keyed by that id.
+export ledger proposalTitleHashes: Map<Bytes<32>, Bytes<32>>;
+export ledger proposalStatus: Map<Bytes<32>, Uint<8>>;
+export ledger proposalAdminCommitments: Map<Bytes<32>, Bytes<32>>;
+export ledger proposalEligibilityRoots: Map<Bytes<32>, MerkleTreeDigest>;
+export ledger proposalBallotCounts: Map<Bytes<32>, Uint<32>>;
 
-enum VotingStatus {
-    INACTIVE,
-    OPEN,
-    CLOSED
-}
-
-enum VoteOption {
-    NO,
-    YES,
-    ABSTAIN
-}
-
-// -------------------------------------------------------------------------
-// Public Ledger State (On-chain, verifiable by anyone)
-// -------------------------------------------------------------------------
-export ledger proposalId: Bytes<32>;
-export ledger titleHash: Bytes<32>;
-export ledger status: VotingStatus;
-export ledger adminPubKey: Bytes<32>;
-export ledger votingDeadline: Uint<64>;
-export ledger totalBallotsCast: Uint<32>;
-export ledger tallyYes: Uint<32>;
-export ledger tallyNo: Uint<32>;
-export ledger tallyAbstain: Uint<32>;
-
-// Nullifier set: records used nullifiers to prevent double-voting without revealing identity
+// Nullifiers bind to both voter secret and proposal id, preventing replay
+// within a proposal while allowing the same voter to vote in another one.
 export ledger nullifiers: Map<Bytes<32>, Boolean>;
-
-// Merkle root of registered voters eligibility list
-export ledger eligibilityMerkleRoot: Bytes<32>;
-
-// Commitments set: records blinded vote commitments
 export ledger voteCommitments: Map<Bytes<32>, Bytes<32>>;
 
-// -------------------------------------------------------------------------
-// Private Witnesses (Client-side execution only, never published to ledger)
-// -------------------------------------------------------------------------
 witness localVoterSecret(): Bytes<32>;
 witness localVoteChoice(): Uint<8>;
 witness localBlindingFactor(): Bytes<32>;
-witness localEligibilityProof(): Vector<8, Bytes<32>>;
+witness localEligibilityProof(): MerkleTreePath<8, Bytes<32>>;
+witness localProposalAdminSecret(proposalId: Bytes<32>): Bytes<32>;
 
-// -------------------------------------------------------------------------
-// Internal Cryptographic Helper Circuits
-// -------------------------------------------------------------------------
 circuit deriveNullifier(voterSecret: Bytes<32>, targetProposal: Bytes<32>): Bytes<32> {
-    // Compute nullifier = persistentHash([voterSecret, targetProposal])
-    return persistentHash<Vector<2, Bytes<32>>>([voterSecret, targetProposal]);
+  return persistentHash<Vector<2, Bytes<32>>>([voterSecret, targetProposal]);
 }
 
 circuit deriveVoteCommitment(choice: Uint<8>, blinding: Bytes<32>): Bytes<32> {
-    const choiceBytes = choice as Field as Bytes<32>;
-    return persistentHash<Vector<2, Bytes<32>>>([choiceBytes, blinding]);
+  const choiceBytes = choice as Field as Bytes<32>;
+  return persistentHash<Vector<2, Bytes<32>>>([choiceBytes, blinding]);
 }
 
-circuit verifyMerkleInclusion(leaf: Bytes<32>, proof: Vector<8, Bytes<32>>, root: Bytes<32>): Boolean {
-    // Compute root through 8 layers of Merkle Tree
-    let currentHash: Bytes<32> = leaf;
-    for (let i: Uint<8> = 0; i < 8; i = i + 1) {
-        currentHash = persistentHash<Vector<2, Bytes<32>>>([currentHash, proof[i]]);
-    }
-    return currentHash == root;
-}
-
-// -------------------------------------------------------------------------
-// Exported Public Circuits (Callable by Lace Wallet / DApp Frontend)
-// -------------------------------------------------------------------------
-
-// 1. Initialize / Register a New Proposal
 export circuit initializeProposal(
-    _proposalId: Bytes<32>,
-    _titleHash: Bytes<32>,
-    _admin: Bytes<32>,
-    _deadline: Uint<64>,
-    _merkleRoot: Bytes<32>
+  proposalId: Bytes<32>,
+  titleHash: Bytes<32>,
+  adminCommitment: Bytes<32>,
+  eligibilityRoot: MerkleTreeDigest
 ): [] {
-    assert(status == VotingStatus.INACTIVE, "Proposal already initialized");
-    proposalId = _proposalId;
-    titleHash = _titleHash;
-    adminPubKey = _admin;
-    votingDeadline = _deadline;
-    eligibilityMerkleRoot = _merkleRoot;
-    status = VotingStatus.OPEN;
-    totalBallotsCast = 0;
-    tallyYes = 0;
-    tallyNo = 0;
-    tallyAbstain = 0;
+  const id = disclose(proposalId);
+  assert(!proposalStatus.member(id), "Proposal already exists");
+  proposalTitleHashes.insert(id, disclose(titleHash));
+  proposalStatus.insert(id, 1);
+  proposalAdminCommitments.insert(id, disclose(adminCommitment));
+  proposalEligibilityRoots.insert(id, disclose(eligibilityRoot));
+  proposalBallotCounts.insert(id, 0);
 }
 
-// 2. Cast Private Vote (Zero-Knowledge ballot submission)
-export circuit castPrivateVote(
-    _proposalId: Bytes<32>,
-    _currentTimestamp: Uint<64>
-): [] {
-    // Validation checks
-    assert(status == VotingStatus.OPEN, "Voting is not currently open");
-    assert(_proposalId == proposalId, "Proposal ID mismatch");
-    assert(_currentTimestamp <= votingDeadline, "Voting deadline has passed");
+export circuit castPrivateVote(proposalId: Bytes<32>): [] {
+  const id = disclose(proposalId);
+  assert(proposalStatus.member(id), "Proposal not found");
+  assert(proposalStatus.lookup(id) == 1, "Voting is closed");
 
-    // Extract private witness values securely inside the user's local prover
-    const voterSecret = localVoterSecret();
-    const voteChoice = localVoteChoice();
-    const blindingFactor = localBlindingFactor();
-    const merkleProof = localEligibilityProof();
+  const voterSecret = localVoterSecret();
+  const voteChoice = localVoteChoice();
+  const blindingFactor = localBlindingFactor();
+  const merkleProof = localEligibilityProof();
+  assert(voteChoice <= 2, "Invalid vote choice");
 
-    // Validate choice is bounded [0: NO, 1: YES, 2: ABSTAIN]
-    assert(voteChoice <= 2, "Invalid vote choice option");
+  const identityCommitment = persistentHash<Vector<1, Bytes<32>>>([voterSecret]);
+  const eligibilityRoot = proposalEligibilityRoots.lookup(id);
+  assert(merkleProof.leaf == identityCommitment, "Eligibility proof leaf mismatch");
+  assert(
+    merkleTreePathRoot<8, Bytes<32>>(merkleProof) == eligibilityRoot,
+    "Voter is not eligible"
+  );
 
-    // 1. Verify eligibility without disclosing identity
-    const voterIdentityCommitment = persistentCommit<Bytes<32>>(voterSecret);
-    const isEligible = verifyMerkleInclusion(voterIdentityCommitment, merkleProof, eligibilityMerkleRoot);
-    assert(isEligible, "Voter identity not included in eligibility tree");
+  const nullifier = disclose(deriveNullifier(voterSecret, id));
+  assert(!nullifiers.member(nullifier), "Voter has already voted on this proposal");
+  const commitment = deriveVoteCommitment(voteChoice, blindingFactor);
+  const ballotCount = proposalBallotCounts.lookup(id);
+  assert(ballotCount < 4294967295, "Proposal has reached the ballot limit");
 
-    // 2. Compute nullifier & check for double-voting
-    const nullifier = deriveNullifier(voterSecret, _proposalId);
-    assert(!nullifiers.member(nullifier), "Double voting detected: Nullifier already spent");
-
-    // 3. Compute vote commitment
-    const commitment = deriveVoteCommitment(voteChoice, blindingFactor);
-
-    // 4. Update ledger state atomically
-    // Disclose public outputs to ledger
-    nullifiers.insert(disclose(nullifier), true);
-    voteCommitments.insert(disclose(nullifier), disclose(commitment));
-    totalBallotsCast = totalBallotsCast + 1;
-
-    // Increment the aggregate tally privately inside the circuit
-    if (voteChoice == 1) {
-        tallyYes = tallyYes + 1;
-    } else if (voteChoice == 0) {
-        tallyNo = tallyNo + 1;
-    } else {
-        tallyAbstain = tallyAbstain + 1;
-    }
+  nullifiers.insert(nullifier, true);
+  voteCommitments.insert(nullifier, disclose(commitment));
+  proposalBallotCounts.insert(id, (ballotCount + 1) as Uint<32>);
 }
 
-// 3. Close Voting Proposal (Admin only)
-export circuit closeProposal(_adminSignature: Bytes<32>): [] {
-    assert(status == VotingStatus.OPEN, "Proposal is not open");
-    assert(_adminSignature == adminPubKey, "Unauthorized: Only contract admin can close proposal");
-    status = VotingStatus.CLOSED;
+export circuit closeProposal(proposalId: Bytes<32>): [] {
+  const id = disclose(proposalId);
+  assert(proposalStatus.member(id), "Proposal not found");
+  assert(proposalStatus.lookup(id) == 1, "Proposal is not open");
+  const adminSecret = localProposalAdminSecret(id);
+  const suppliedCommitment = persistentHash<Vector<1, Bytes<32>>>([adminSecret]);
+  assert(
+    suppliedCommitment == proposalAdminCommitments.lookup(id),
+    "Invalid proposal administrator secret"
+  );
+  proposalStatus.insert(id, 2);
 }

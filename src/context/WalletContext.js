@@ -1,129 +1,81 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 
-const WalletContext = createContext();
+const WalletContext = createContext(null);
+
+function injectedWallets() {
+  if (typeof window === 'undefined' || !window.midnight) return [];
+  return Object.entries(window.midnight).map(([id, api]) => ({
+    id,
+    name: api?.name || id,
+    icon: typeof api?.icon === 'string' ? api.icon : '',
+    api,
+  })).filter(({ api }) => typeof api?.connect === 'function' && /^4\./.test(api.apiVersion || ''));
+}
 
 export const WalletProvider = ({ children }) => {
-  const [isConnected, setIsConnected] = useState(false);
   const [walletAddress, setWalletAddress] = useState('');
-  const [voterSecret, setVoterSecret] = useState('');
-  const [balanceDust, setBalanceDust] = useState(250.0);
-  const [balanceNight, setBalanceNight] = useState(15.5);
-  const [selectedNetwork, setSelectedNetwork] = useState('Midnight Preprod');
+  const [walletName, setWalletName] = useState('');
+  const [connectedAPI, setConnectedAPI] = useState(null);
+  const [balanceDust, setBalanceDust] = useState(null);
+  const [balanceNight, setBalanceNight] = useState(null);
+  const [selectedNetwork] = useState('Midnight Preprod');
   const [isLaceModalOpen, setIsLaceModalOpen] = useState(false);
-  const [dappConnector, setDappConnector] = useState(null);
+  const [walletChoices, setWalletChoices] = useState([]);
 
-  useEffect(() => {
-    // Check for window.midnight or DApp Connector API availability
-    if (typeof window !== 'undefined' && window.midnight && window.midnight.mnLace) {
-      setDappConnector(window.midnight.mnLace);
+  const isConnected = Boolean(connectedAPI && walletAddress);
+  const dappConnector = connectedAPI;
+
+  const connectWallet = async (walletId) => {
+    const choices = injectedWallets();
+    setWalletChoices(choices);
+    const choice = choices.find(({ id }) => id === walletId);
+    if (!choice) {
+      toast.error('Wallet extension not found', { description: 'Install and unlock Lace or 1AM, then try again.' });
+      return;
     }
 
-    const savedConnected = localStorage.getItem('midnight_wallet_connected');
-    const savedAddress = localStorage.getItem('midnight_wallet_address');
-    const savedSecret = localStorage.getItem('midnight_voter_secret');
-    if (savedConnected === 'true' && savedAddress && savedSecret) {
-      setIsConnected(true);
-      setWalletAddress(savedAddress);
-      setVoterSecret(savedSecret);
-    }
-  }, []);
-
-  const connectWallet = async (customAddress = null) => {
     try {
-      // 1. Attempt real Lace/1AM wallet connection via DApp Connector API if available
-      if (typeof window !== 'undefined' && window.midnight && window.midnight.mnLace) {
-        const api = await window.midnight.mnLace.enable();
-        const state = await api.state();
-        if (state && state.address) {
-          const realAddress = state.address;
-          const secret = `voter_sk_${realAddress.slice(-12)}_${Date.now()}`;
-          setIsConnected(true);
-          setWalletAddress(realAddress);
-          setVoterSecret(secret);
-          if (state.balances && state.balances.DUST) {
-            setBalanceDust(Number(state.balances.DUST) / 1000000);
-          }
-          if (state.balances && state.balances.NIGHT) {
-            setBalanceNight(Number(state.balances.NIGHT) / 1000000);
-          }
-          localStorage.setItem('midnight_wallet_connected', 'true');
-          localStorage.setItem('midnight_wallet_address', realAddress);
-          localStorage.setItem('midnight_voter_secret', secret);
-          toast.success('Lace Wallet Connected (Real DApp API)', {
-            description: `Connected to Midnight Preprod: ${realAddress.slice(0, 14)}...`,
-          });
-          setIsLaceModalOpen(false);
-          return;
-        }
+      const api = await choice.api.connect('preprod');
+      const connection = await api.getConnectionStatus();
+      if (connection?.networkId && connection.networkId !== 'preprod') {
+        throw new Error(`Wallet is connected to ${connection.networkId}, not Preprod.`);
       }
-    } catch (err) {
-      console.warn('Lace DApp API connection notice, initializing fallback handler:', err);
+      const walletAddressResult = await api.getUnshieldedAddress();
+      const address = typeof walletAddressResult === 'string'
+        ? walletAddressResult
+        : walletAddressResult?.unshieldedAddress || walletAddressResult?.address;
+      if (!address) throw new Error('The wallet did not provide a Midnight unshielded address.');
+      setConnectedAPI(api);
+      setWalletAddress(address);
+      setWalletName(choice.name);
+      const dust = await api.getDustBalance();
+      const tokenBalances = await api.getUnshieldedBalances();
+      setBalanceDust(typeof dust === 'bigint' || typeof dust === 'number' ? Number(dust) / 1_000_000_000_000_000 : null);
+      setBalanceNight(tokenBalances?.NIGHT == null ? null : Number(tokenBalances.NIGHT) / 1_000_000);
+      setIsLaceModalOpen(false);
+      toast.success(`Connected to ${choice.name}`);
+    } catch (error) {
+      toast.error('Wallet connection failed', { description: error.message });
     }
-
-    // 2. Active fallback for development / test environments without Lace extension active
-    const randomSuffix = Math.random().toString(36).substring(2, 10) + Math.random().toString(36).substring(2, 8);
-    const address = customAddress || `addr_midnight_preprod1qz${randomSuffix}`;
-    const secret = `voter_sk_${Math.random().toString(36).substring(2, 15)}_${Date.now()}`;
-    setIsConnected(true);
-    setWalletAddress(address);
-    setVoterSecret(secret);
-    setBalanceDust(350.75);
-    setBalanceNight(24.0);
-    localStorage.setItem('midnight_wallet_connected', 'true');
-    localStorage.setItem('midnight_wallet_address', address);
-    localStorage.setItem('midnight_voter_secret', secret);
-    toast.success('Lace Wallet Connected (Preprod Testnet)', {
-      description: `Connected to ${selectedNetwork} with address ${address.slice(0, 14)}...`,
-    });
-    setIsLaceModalOpen(false);
   };
 
   const disconnectWallet = () => {
-    setIsConnected(false);
+    setConnectedAPI(null);
     setWalletAddress('');
-    setVoterSecret('');
-    localStorage.removeItem('midnight_wallet_connected');
-    localStorage.removeItem('midnight_wallet_address');
-    localStorage.removeItem('midnight_voter_secret');
-    toast.info('Lace Wallet Disconnected', {
-      description: 'Session cleared. Reconnect anytime to cast private ballots.',
-    });
+    setWalletName('');
+    setBalanceDust(null);
+    setBalanceNight(null);
   };
 
-  const switchNetwork = (networkName) => {
-    setSelectedNetwork(networkName);
-    toast.info(`Switched to ${networkName}`);
-  };
+  const value = useMemo(() => ({
+    isConnected, walletAddress, walletName, balanceDust, balanceNight,
+    selectedNetwork, isLaceModalOpen, dappConnector, walletChoices,
+    setIsLaceModalOpen: (open) => { if (open) setWalletChoices(injectedWallets()); setIsLaceModalOpen(open); },
+    connectWallet, disconnectWallet,
+  }), [isConnected, walletAddress, walletName, balanceDust, balanceNight, selectedNetwork, isLaceModalOpen, dappConnector, walletChoices]);
 
-  const regenerateSecret = () => {
-    const newSecret = `voter_sk_${Math.random().toString(36).substring(2, 15)}_${Date.now()}`;
-    setVoterSecret(newSecret);
-    localStorage.setItem('midnight_voter_secret', newSecret);
-    toast.success('Voter Secret Rotated');
-  };
-
-  return (
-    <WalletContext.Provider
-      value={{
-        isConnected,
-        walletAddress,
-        voterSecret,
-        balanceDust,
-        balanceNight,
-        selectedNetwork,
-        isLaceModalOpen,
-        dappConnector,
-        setIsLaceModalOpen,
-        connectWallet,
-        disconnectWallet,
-        switchNetwork,
-        regenerateSecret,
-      }}
-    >
-      {children}
-    </WalletContext.Provider>
-  );
+  return <WalletContext.Provider value={value}>{children}</WalletContext.Provider>;
 };
 
 export const useWallet = () => useContext(WalletContext);

@@ -4,49 +4,15 @@ set -e
 SOURCE_FILE="${1:-public/contract/private_vote.compact}"
 OUTPUT_DIR="${2:-managed/private_vote}"
 
-echo "=================================================="
-echo "  Midnight Compact Compiler v0.23.4"
-echo "=================================================="
-echo "[*] Parsing source: ${SOURCE_FILE}"
-echo "[*] Target output:   ${OUTPUT_DIR}"
-echo ""
-
 if [ ! -f "${SOURCE_FILE}" ]; then
-  echo "[!] Error: Source file ${SOURCE_FILE} not found!"
+  echo "Compact source file not found: ${SOURCE_FILE}" >&2
   exit 1
 fi
 
-echo "[1/4] Validating Compact pragma version 0.23..."
-# Attempt real Compact compiler invocation if available in environment
-if command -v compactc &> /dev/null; then
-  echo "[*] Invoking Compact compiler binary: compactc"
-  compactc "${SOURCE_FILE}" -o "${OUTPUT_DIR}" || true
-elif command -v npx &> /dev/null && npx @midnight-ntwrk/compactc --version &> /dev/null; then
-  echo "[*] Invoking npx @midnight-ntwrk/compactc"
-  npx @midnight-ntwrk/compactc "${SOURCE_FILE}" -o "${OUTPUT_DIR}" || true
-else
-  echo "[*] Using Midnight Compact WASM runtime parser v0.23"
+if ! command -v compact >/dev/null 2>&1; then
+  echo "Compact developer tools (compact) are required. No mock compilation will be reported as success." >&2
+  exit 127
 fi
 
-echo "[2/4] Analyzing dual-state architecture & witness declarations..."
-echo "      - Ledger declarations: proposalId, status, nullifiers, voteCommitments, tallyYes, tallyNo, tallyAbstain"
-echo "      - Witness declarations: localVoterSecret, localVoteChoice, localBlindingFactor, localEligibilityProof"
-echo "[3/4] Synthesizing R1CS Zero-Knowledge Circuits..."
-echo "      [+] Circuit: initializeProposal (142 constraints, 5 public inputs)"
-echo "      [+] Circuit: castPrivateVote (3840 constraints, 2 public inputs, 11 witness inputs)"
-echo "      [+] Circuit: closeProposal (86 constraints, 1 public input)"
-echo "[4/4] Emitting managed build artifacts..."
-echo "      -> ${OUTPUT_DIR}/contract/index.js"
-echo "      -> ${OUTPUT_DIR}/contract/index.d.ts"
-echo "      -> ${OUTPUT_DIR}/zkir/private_vote.zkir"
-echo "      -> ${OUTPUT_DIR}/zkir/private_vote.bzkir"
-echo "      -> ${OUTPUT_DIR}/keys/private_vote.prover"
-echo "      -> ${OUTPUT_DIR}/keys/private_vote.verifier"
-echo "      -> ${OUTPUT_DIR}/compiler/contract-info.json"
-echo "      -> ${OUTPUT_DIR}/compiler/contract-manifest.json"
-
-echo ""
-echo "=================================================="
-echo " [SUCCESS] Compilation completed in 1.42s"
-echo " Managed artifacts verified and ready for Midnight Preprod deploy."
-echo "=================================================="
+mkdir -p "${OUTPUT_DIR}"
+compact compile "${SOURCE_FILE}" "${OUTPUT_DIR}"
